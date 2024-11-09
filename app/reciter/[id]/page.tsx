@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area"; 
 import { Progress } from "@/components/ui/progress";
 import { FaDownload, FaHeart, FaPlay, FaPause } from "react-icons/fa";
-
+import toast from 'react-hot-toast';
 interface Recitation {
   id: number;
   title: string;
@@ -41,15 +41,16 @@ const ReciterPage = () => {
         const response = await fetch(`https://api3.islamhouse.com/v3/paV29H2gm56kvLPy/quran/get-recitation/${id}/ar/json`);
         
         if (!response.ok) {
-          setError(`Failed to fetch data for ID ${id}`);
+          // setError(`Failed to fetch data for ID ${id}`);
+       toast.error('Failed to fetch data for ID ${id}');
+       
           return null;
         }
-
         const data: Recitation = await response.json();
         return data;
       } catch (error) {
         console.error("Error fetching recitation data:", error);
-        setError("Error fetching recitation data");
+        toast.error("Error fetching recitation data");
         return null;
       }
     };
