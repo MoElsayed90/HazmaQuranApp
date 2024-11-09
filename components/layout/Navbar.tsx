@@ -31,15 +31,7 @@ const Navbar = () => {
               <a className="text-primary">Item 1</a>
             </li>
             <li>
-              <a className="text-primary">Parent</a>
-              <ul className="p-2">
-                <li>
-                  <a className="text-primary">Submenu 1</a>
-                </li>
-                <li>
-                  <a className="text-primary">Submenu 2</a>
-                </li>
-              </ul>
+              <a className="text-primary">Item 1</a>
             </li>
             <li>
               <a className="text-primary">Item 3</a>
@@ -51,23 +43,13 @@ const Navbar = () => {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a className="text-secondary">Item 1</a>
+            <a className="text-secondary">الرئيسيه</a>
           </li>
           <li>
-            <details>
-              <summary className="text-secondary">Parent</summary>
-              <ul className="p-2 bg-accent">
-                <li>
-                  <a className="text-primary">Submenu 1</a>
-                </li>
-                <li>
-                  <a className="text-primary">Submenu 2</a>
-                </li>
-              </ul>
-            </details>
+            <a className="text-secondary">القراء</a>
           </li>
           <li>
-            <a className="text-secondary">Item 3</a>
+            <a className="text-secondary">من نحن</a>
           </li>
         </ul>
       </div>

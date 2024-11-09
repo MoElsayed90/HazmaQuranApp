@@ -6,6 +6,13 @@
 body {
   font-family: 'Amiri', Arial, sans-serif;
 }
+.rtl{
+  direction: rtl !important;
+  text-align: right; /* Align text to the right */
+}
+.rtl .flex {
+  flex-direction: row-reverse; /* Reverse flex direction for items */
+}
 
 @layer base {
   :root {
