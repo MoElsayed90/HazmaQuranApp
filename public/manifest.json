@@ -1,0 +1,30 @@
+{
+  "name": "حمزة - تطبيق القرآن الكريم",
+  "short_name": "حمزة",
+  "description": "استمع إلى القرآن الكريم بصوت أشهر القراء. Quran app. Developed by Eng. Mohamed Elsayed.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDFAF6",
+  "theme_color": "#1B6B4A",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

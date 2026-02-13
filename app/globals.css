@@ -1,53 +1,82 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Amiri', Arial, sans-serif;
-}
-.rtl{
-  direction: rtl !important;
-  text-align: right; /* Align text to the right */
-}
-.rtl .flex {
-  flex-direction: row-reverse; /* Reverse flex direction for items */
-}
-
 @layer base {
   :root {
-    --background: 35 22% 87%;
-    --foreground: 35 50% 20%;
-    --primary: 33 34% 28%;
-    --primary-foreground: 40 10% 95%;
-    --secondary: 19 39% 33%;
-    --secondary-foreground: 35 22% 87%;
+    --background: 40 33% 97%;
+    --foreground: 30 40% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 30 40% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 40% 10%;
+    --primary: 152 58% 26%;
+    --primary-foreground: 40 33% 97%;
+    --secondary: 33 25% 45%;
+    --secondary-foreground: 40 33% 97%;
+    --muted: 35 25% 92%;
+    --muted-foreground: 30 10% 45%;
+    --accent: 43 80% 52%;
+    --accent-foreground: 30 40% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 35 20% 85%;
+    --input: 35 20% 85%;
+    --ring: 152 58% 26%;
+    --radius: 0.75rem;
+    --chart-1: 152 58% 26%;
+    --chart-2: 43 80% 52%;
+    --chart-3: 33 25% 45%;
+    --chart-4: 200 60% 50%;
+    --chart-5: 0 84% 60%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 152 58% 26%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 35 25% 92%;
+    --sidebar-accent-foreground: 240 5.3% 26.1%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 152 58% 26%;
+    --quran-font-size: 1.5rem;
+    --quran-line-height: 2.2;
+    --translation-font-size: 0.95rem;
   }
+
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 240 15% 8%;
+    --foreground: 35 20% 90%;
+    --card: 240 15% 11%;
+    --card-foreground: 35 20% 90%;
+    --popover: 240 15% 11%;
+    --popover-foreground: 35 20% 90%;
+    --primary: 152 50% 55%;
+    --primary-foreground: 240 15% 8%;
+    --secondary: 33 30% 60%;
+    --secondary-foreground: 240 15% 8%;
+    --muted: 240 10% 16%;
+    --muted-foreground: 35 10% 60%;
+    --accent: 43 70% 55%;
+    --accent-foreground: 240 15% 8%;
+    --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 240 10% 18%;
+    --input: 240 10% 18%;
+    --ring: 152 50% 55%;
+    --chart-1: 152 50% 55%;
+    --chart-2: 43 70% 55%;
+    --chart-3: 33 30% 60%;
+    --chart-4: 200 50% 55%;
+    --chart-5: 0 62% 55%;
+    --sidebar-background: 240 15% 6%;
+    --sidebar-foreground: 35 20% 90%;
+    --sidebar-primary: 152 50% 55%;
+    --sidebar-primary-foreground: 240 15% 8%;
+    --sidebar-accent: 240 10% 16%;
+    --sidebar-accent-foreground: 35 20% 90%;
+    --sidebar-border: 240 10% 18%;
+    --sidebar-ring: 152 50% 55%;
   }
 }
 
@@ -55,7 +84,53 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+    line-height: 1.75;
+  }
+
+  /* Uthmanic Quran text styling - size driven by CSS variables from FontSizeSync */
+  .quran-text {
+    font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+    font-size: var(--quran-font-size, 1.5rem);
+    line-height: var(--quran-line-height, 2.2);
+    letter-spacing: 0.02em;
+  }
+}
+
+/* Base typography - larger for Arabic readability */
+html {
+  font-size: 18px;
+  transition: color-scheme 0.3s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Audio player highlight animation */
+.ayah-highlight {
+  animation: ayah-glow 0.5s ease-out;
+}
+
+@keyframes ayah-glow {
+  0% {
+    background-color: hsl(var(--primary) / 0.2);
+  }
+  100% {
+    background-color: hsl(var(--primary) / 0.08);
   }
 }

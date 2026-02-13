@@ -1,0 +1,41 @@
+# HazmaQuranApp - Cursor Rules
+
+## Stack
+- Next.js 15 (App Router), React 19, TypeScript strict
+- Tailwind CSS + shadcn/ui (new-york style, CSS variables)
+- Framer Motion for animations
+- Zustand for state management (persisted to localStorage)
+- Sonner for toast notifications
+
+## Architecture
+- **Data Layer**: `lib/api/` - QuranDataSource abstraction with swappable providers
+  - `AlQuranCloudProvider` for Quran text/ayahs/translations
+  - `IslamHouseProvider` for reciters/audio (delegates Quran data to AlQuranCloud)
+- **State**: `lib/stores/` - Zustand stores for bookmarks, settings, audio state
+- **Components**: `components/ui/` (shadcn), `components/layout/`, `components/quran/`, `components/shared/`
+
+## Path aliases
+- `@/components` - all components
+- `@/components/ui` - shadcn/ui primitives
+- `@/lib` - utilities, API, stores, constants
+- `@/hooks` - custom React hooks
+
+## Conventions
+- App Router with route groups: `app/(main)/` for all pages
+- Server Components by default; `"use client"` only when needed
+- Arabic-first (RTL): `lang="ar"`, `dir="rtl"` on `<html>`
+- All API calls through `lib/api/providers/` (never inline fetch)
+- Persistence via Zustand `persist` middleware to localStorage
+
+## Code style
+- TypeScript strict; type all props and API responses
+- Default export for pages/layouts; named exports for components
+- Use `cn()` from `@/lib/utils` for conditional classes
+- Use `lucide-react` for icons (never react-icons)
+- Arabic text strings use font-quran class
+
+## Naming
+- Components: PascalCase files and exports
+- Hooks: `use-kebab-case.ts`
+- Stores: `use-kebab-case.ts` in `lib/stores/`
+- Routes: lowercase under `app/(main)/`
