@@ -15,6 +15,7 @@ import type {
 } from "../types";
 import { cachedFetch } from "../client";
 import { AlQuranCloudProvider } from "./alquran-cloud";
+import { normalizeAudioUrl } from "@/lib/audio/url-resolver";
 
 const API_KEY = process.env.NEXT_PUBLIC_ISLAMHOUSE_API_KEY || "paV29H2gm56kvLPy";
 const BASE_URL = `https://api3.islamhouse.com/v3/${API_KEY}`;
@@ -93,7 +94,7 @@ export class IslamHouseProvider implements QuranDataSource {
         id: a.id,
         title: a.title,
         size: a.size,
-        url: a.url,
+        url: normalizeAudioUrl(a.url) || a.url,
       })),
     };
   }

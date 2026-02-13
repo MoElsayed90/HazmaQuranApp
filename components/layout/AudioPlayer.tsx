@@ -32,16 +32,24 @@ export function AudioPlayerMini() {
     currentTime,
     duration,
     isVisible,
+    audioError,
+    play,
     toggle,
     stop,
     next,
     previous,
     setExpanded,
+    clearAudioError,
     queue,
     queueIndex,
   } = useAudioPlayerContext();
 
   if (!isVisible || !currentTrack) return null;
+
+  const handlePlayRetry = () => {
+    clearAudioError();
+    play(currentTrack);
+  };
 
   return (
     <motion.div
@@ -52,6 +60,12 @@ export function AudioPlayerMini() {
     >
       {/* Progress bar at top */}
       <Progress value={progress} className="h-1 rounded-none" />
+
+      {audioError && (
+        <p className="text-xs text-center text-amber-600 dark:text-amber-400 py-1 px-2 bg-amber-500/10">
+          اضغط للتشغيل
+        </p>
+      )}
 
       <div className="container mx-auto flex items-center gap-3 px-4 py-2">
         {/* Track info */}
@@ -89,8 +103,9 @@ export function AudioPlayerMini() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-9 w-9"
-            onClick={toggle}
+            className={cn("h-9 w-9", audioError && "text-primary ring-2 ring-primary/30")}
+            onClick={audioError ? handlePlayRetry : toggle}
+            aria-label={audioError ? "إعادة تشغيل الصوت" : isPlaying ? "إيقاف" : "تشغيل"}
           >
             {isPlaying ? (
               <Pause className="h-5 w-5" />
@@ -143,17 +158,25 @@ export function AudioPlayerExpanded() {
     duration,
     speed,
     isExpanded,
+    audioError,
+    play,
     toggle,
     seek,
     setSpeed,
     next,
     previous,
     setExpanded,
+    clearAudioError,
     queue,
     queueIndex,
   } = useAudioPlayerContext();
 
   if (!isExpanded || !currentTrack) return null;
+
+  const handlePlayRetry = () => {
+    clearAudioError();
+    play(currentTrack);
+  };
 
   return (
     <AnimatePresence>
@@ -195,6 +218,11 @@ export function AudioPlayerExpanded() {
                 {currentTrack.subtitle}
               </p>
             )}
+            {audioError && (
+              <p className="text-sm text-amber-600 dark:text-amber-400 mt-2">
+                اضغط للتشغيل
+              </p>
+            )}
           </div>
 
           {/* Progress */}
@@ -226,8 +254,12 @@ export function AudioPlayerExpanded() {
 
             <Button
               size="icon"
-              className="h-16 w-16 rounded-full"
-              onClick={toggle}
+              className={cn(
+                "h-16 w-16 rounded-full",
+                audioError && "ring-2 ring-amber-500/50"
+              )}
+              onClick={audioError ? handlePlayRetry : toggle}
+              aria-label={audioError ? "إعادة تشغيل الصوت" : isPlaying ? "إيقاف" : "تشغيل"}
             >
               {isPlaying ? (
                 <Pause className="h-8 w-8" />

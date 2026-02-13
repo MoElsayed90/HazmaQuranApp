@@ -14,6 +14,11 @@ export const metadata: Metadata = {
     "استمع إلى القرآن الكريم بصوت أشهر القراء. تصفح السور، احفظ الإشارات المرجعية، واستمتع بتجربة قراءة واستماع مميزة.",
   keywords: ["قرآن", "quran", "إسلام", "تلاوة", "قراء"],
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    title: "حمزة",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {

@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState, createContext, useContext } from "react";
 import { toast } from "sonner";
 import type { PlaybackSpeed } from "@/lib/constants";
+import { resolveAudioUrl } from "@/lib/audio/url-resolver";
+
+const DEV = typeof process !== "undefined" && process.env.NODE_ENV === "development";
 
 export interface AudioTrack {
   id: string | number;
@@ -34,6 +37,8 @@ export interface AudioPlayerState {
   isVisible: boolean;
   /** Whether expanded player is open */
   isExpanded: boolean;
+  /** Error message when load/play failed; clear on retry or new play */
+  audioError: string | null;
 }
 
 export interface AudioPlayerActions {
@@ -50,6 +55,8 @@ export interface AudioPlayerActions {
   previous: () => void;
   setExpanded: (expanded: boolean) => void;
   isTrackPlaying: (id: string | number) => boolean;
+  /** Clear playback error and allow retry */
+  clearAudioError: () => void;
 }
 
 export type AudioPlayerContextType = AudioPlayerState & AudioPlayerActions;
@@ -78,6 +85,7 @@ export function useAudioPlayer(): AudioPlayerContextType {
     queueIndex: -1,
     isVisible: false,
     isExpanded: false,
+    audioError: null,
   });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -112,25 +120,73 @@ export function useAudioPlayer(): AudioPlayerContextType {
       if (!audio || index < 0 || index >= queue.length) return;
 
       const track = queue[index];
-      if (!track.url?.trim()) return;
+      const resolvedUrl = resolveAudioUrl(track.url);
+      if (!resolvedUrl) {
+        setState((prev) => ({
+          ...prev,
+          audioError: "رابط الصوت غير متوفر",
+        }));
+        if (DEV) console.warn("[audio] empty or invalid URL for track", track.id);
+        return;
+      }
 
-      audio.src = track.url;
+      setState((prev) => ({ ...prev, audioError: null }));
+
       audio.playbackRate = stateRef.current.speed;
-      audio.play().catch(() => {
-        toast("اضغط تشغيل مرة أخرى", { description: "لم يتمكن المتصفح من تشغيل الصوت تلقائياً" });
-      });
+      audio.src = resolvedUrl;
+      audio.load();
 
-      setState((prev) => ({
-        ...prev,
-        currentTrack: track,
-        queue,
-        queueIndex: index,
-        isPlaying: true,
-        isVisible: true,
-        progress: 0,
-        currentTime: 0,
-        duration: 0,
-      }));
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.then === "function") {
+        playPromise
+          .then(() => {
+            setState((prev) => ({
+              ...prev,
+              currentTrack: track,
+              queue,
+              queueIndex: index,
+              isPlaying: true,
+              isVisible: true,
+              progress: 0,
+              currentTime: 0,
+              duration: 0,
+              audioError: null,
+            }));
+          })
+          .catch((err: unknown) => {
+            const msg = err instanceof Error ? err.message : String(err);
+            if (DEV) {
+              console.warn("[audio] play() failed:", msg, "url:", resolvedUrl);
+            }
+            setState((prev) => ({
+              ...prev,
+              currentTrack: track,
+              queue,
+              queueIndex: index,
+              isPlaying: false,
+              isVisible: true,
+              progress: 0,
+              currentTime: 0,
+              duration: 0,
+              audioError: "اضغط للتشغيل",
+            }));
+            toast("اضغط تشغيل مرة أخرى", {
+              description: "لم يتمكن المتصفح من تشغيل الصوت. جرّب النقر على زر التشغيل.",
+            });
+          });
+      } else {
+        setState((prev) => ({
+          ...prev,
+          currentTrack: track,
+          queue,
+          queueIndex: index,
+          isPlaying: true,
+          isVisible: true,
+          progress: 0,
+          currentTime: 0,
+          duration: 0,
+        }));
+      }
     },
     [getAudio]
   );
@@ -184,7 +240,12 @@ export function useAudioPlayer(): AudioPlayerContextType {
       queueIndex: -1,
       isVisible: false,
       isExpanded: false,
+      audioError: null,
     }));
+  }, []);
+
+  const clearAudioError = useCallback(() => {
+    setState((prev) => ({ ...prev, audioError: null }));
   }, []);
 
   const seek = useCallback((progress: number) => {
@@ -249,9 +310,21 @@ export function useAudioPlayer(): AudioPlayerContextType {
         }));
       }
     };
-    const onError = () => {
-      toast.error("فشل تحميل الصوت");
-      setState((prev) => ({ ...prev, isPlaying: false }));
+    const onError = (e: Event) => {
+      const el = e.target as HTMLAudioElement;
+      const code = el?.error?.code;
+      const msg = el?.error?.message || "فشل تحميل الصوت";
+      if (DEV) {
+        console.warn("[audio] element error:", code, msg, "src:", el?.src);
+      }
+      setState((prev) => ({
+        ...prev,
+        isPlaying: false,
+        audioError: "فشل تحميل الصوت",
+      }));
+      toast.error("فشل تحميل الصوت", {
+        description: "تحقق من الاتصال أو جرّب مرة أخرى.",
+      });
     };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
@@ -282,5 +355,6 @@ export function useAudioPlayer(): AudioPlayerContextType {
     previous,
     setExpanded,
     isTrackPlaying,
+    clearAudioError,
   };
 }

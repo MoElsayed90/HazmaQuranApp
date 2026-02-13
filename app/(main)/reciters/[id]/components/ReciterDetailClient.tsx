@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Download, Mic2, Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,8 @@ export function ReciterDetailClient({
   reciterImage,
   recitations,
 }: ReciterDetailClientProps) {
+  const [imageError, setImageError] = useState(false);
+  const showImage = Boolean(reciterImage && !imageError);
   const { play, isTrackPlaying, currentTrack, progress, playQueue } =
     useAudioPlayerContext();
 
@@ -53,15 +56,17 @@ export function ReciterDetailClient({
       {/* Reciter header */}
       <div className="flex flex-col sm:flex-row items-center gap-6">
         <div className="relative h-32 w-32 rounded-2xl overflow-hidden bg-muted shrink-0">
-          {reciterImage ? (
+          {showImage ? (
             <Image
-              src={reciterImage}
+              src={reciterImage!}
               alt={reciterName}
               fill
               className="object-cover"
+              onError={() => setImageError(true)}
+              unoptimized
             />
           ) : (
-            <div className="h-full flex items-center justify-center">
+            <div className="h-full w-full flex items-center justify-center">
               <Mic2 className="h-12 w-12 text-muted-foreground/30" />
             </div>
           )}

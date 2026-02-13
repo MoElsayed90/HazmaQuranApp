@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Reciter } from "@/lib/api/types";
@@ -10,7 +11,19 @@ interface ReciterCardProps {
   index?: number;
 }
 
+function ReciterAvatar({ reciter }: { reciter: Reciter }) {
+  return (
+    <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+      <span className="text-2xl font-bold text-primary/80" aria-hidden>
+        {reciter.name?.charAt(0) ?? "?"}
+      </span>
+    </div>
+  );
+}
+
 export function ReciterCard({ reciter, index = 0 }: ReciterCardProps) {
+  const [imageError, setImageError] = useState(false);
+  const showImage = reciter.imageUrl && !imageError;
   const query = reciter.recitationIds?.length
     ? `?recitations=${reciter.recitationIds.join(",")}`
     : "";
@@ -25,20 +38,18 @@ export function ReciterCard({ reciter, index = 0 }: ReciterCardProps) {
         <div className="group rounded-xl border bg-card overflow-hidden hover:border-primary/20 hover:shadow-md transition-all duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 outline-none">
           {/* Image or avatar placeholder */}
           <div className="relative h-48 bg-muted overflow-hidden flex items-center justify-center">
-            {reciter.imageUrl ? (
+            {showImage ? (
               <Image
-                src={reciter.imageUrl}
+                src={reciter.imageUrl!}
                 alt={reciter.name}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                onError={() => setImageError(true)}
+                unoptimized
               />
             ) : (
-              <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
-                <span className="text-2xl font-bold text-primary/80" aria-hidden>
-                  {reciter.name?.charAt(0) ?? "?"}
-                </span>
-              </div>
+              <ReciterAvatar reciter={reciter} />
             )}
           </div>
 
