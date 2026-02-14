@@ -47,6 +47,7 @@ export const SURAH_NAMES_AR: Record<number, string> = {
 export const NAV_LINKS = [
   { href: "/", label: "الرئيسية", icon: "Home" },
   { href: "/surahs", label: "السور", icon: "BookOpen" },
+  { href: "/mushaf", label: "مصحف مصور", icon: "Image" },
   { href: "/reciters", label: "القراء", icon: "Mic2" },
   { href: "/bookmarks", label: "المحفوظات", icon: "Bookmark" },
 ] as const;

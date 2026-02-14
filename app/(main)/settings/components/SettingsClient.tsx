@@ -7,6 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSettingsStore } from "@/lib/stores/use-settings";
 import { useBookmarkStore } from "@/lib/stores/use-bookmarks";
 import { FONT_SIZES } from "@/lib/constants";
@@ -16,14 +23,35 @@ import { useEffect, useState } from "react";
 
 const fontSizeKeys = Object.keys(FONT_SIZES) as Array<keyof typeof FONT_SIZES>;
 
+const FALLBACK_TRANSLATIONS = [
+  { id: 57, name: "التفسير الميسر", slug: "ar.muyassar", languageName: "arabic" },
+  { id: 131, name: "Clear Quran (English)", slug: "en.clearcoran", languageName: "english" },
+  { id: 20, name: "Sahih International (English)", slug: "en.sahih", languageName: "english" },
+];
+
 export function SettingsClient() {
   const { theme, setTheme } = useTheme();
-  const { fontSize, setFontSize, showTranslation, setShowTranslation } =
+  const { fontSize, setFontSize, showTranslation, setShowTranslation, translationEdition, setTranslationEdition } =
     useSettingsStore();
   const { bookmarks, clearAll } = useBookmarkStore();
   const [mounted, setMounted] = useState(false);
+  const [translations, setTranslations] = useState<Array<{ id: number; name: string; slug: string; languageName: string }>>(FALLBACK_TRANSLATIONS);
+
+  const translationOptions = translations.some((t) => t.slug === translationEdition)
+    ? translations
+    : [...translations, { id: 0, name: translationEdition || "—", slug: translationEdition || "", languageName: "" }];
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    fetch("/api/translations")
+      .then((r) => r.ok ? r.json() : { translations: [] })
+      .then((data: { translations?: Array<{ id: number; name: string; slug: string; languageName: string }> }) => {
+        const list = data.translations && data.translations.length > 0 ? data.translations : FALLBACK_TRANSLATIONS;
+        setTranslations(list);
+      })
+      .catch(() => {});
+  }, []);
 
   const fontSizeIndex = fontSizeKeys.indexOf(fontSize);
 
@@ -112,13 +140,13 @@ export function SettingsClient() {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <BookOpenText className="h-4 w-4" />
-            التفسير
+            الترجمة
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm">عرض التفسير الميسر</p>
+              <p className="text-sm">عرض الترجمة تحت الآية</p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 يظهر تحت كل آية أثناء القراءة
               </p>
@@ -127,6 +155,21 @@ export function SettingsClient() {
               checked={showTranslation}
               onCheckedChange={setShowTranslation}
             />
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">اختر مصدر الترجمة</p>
+            <Select value={translationEdition || ""} onValueChange={setTranslationEdition}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="ترجمة" />
+              </SelectTrigger>
+              <SelectContent>
+                {translationOptions.map((t) => (
+                  <SelectItem key={t.slug || t.id} value={t.slug}>
+                    {t.name} {t.languageName ? `(${t.languageName})` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -175,25 +218,14 @@ export function SettingsClient() {
           <p>الإصدار 1.0.0</p>
           <Separator className="my-3" />
           <p>
-            بيانات القرآن من{" "}
+            المحتوى والقراء من{" "}
             <a
-              href="https://alquran.cloud"
+              href="https://quran.foundation"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              AlQuran Cloud
-            </a>
-          </p>
-          <p>
-            بيانات القراء من{" "}
-            <a
-              href="https://islamhouse.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              IslamHouse
+              Quran.Foundation
             </a>
           </p>
           <Separator className="my-3" />

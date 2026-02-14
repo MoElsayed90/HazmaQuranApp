@@ -16,6 +16,7 @@ import type {
 import { cachedFetch } from "../client";
 import { AlQuranCloudProvider } from "./alquran-cloud";
 import { normalizeAudioUrl } from "@/lib/audio/url-resolver";
+import { QuranFoundationProvider } from "./quran-foundation";
 
 const API_KEY = process.env.NEXT_PUBLIC_ISLAMHOUSE_API_KEY || "paV29H2gm56kvLPy";
 const BASE_URL = `https://api3.islamhouse.com/v3/${API_KEY}`;
@@ -111,12 +112,11 @@ export class IslamHouseProvider implements QuranDataSource {
   }
 }
 
-// Singleton instance
-let providerInstance: IslamHouseProvider | null = null;
+let qfInstance: QuranFoundationProvider | null = null;
 
 export function getQuranProvider(): QuranDataSource {
-  if (!providerInstance) {
-    providerInstance = new IslamHouseProvider();
+  if (!qfInstance) {
+    qfInstance = new QuranFoundationProvider();
   }
-  return providerInstance;
+  return qfInstance;
 }

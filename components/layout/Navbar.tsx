@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Search, BookOpen, Mic2, Bookmark, Home, Settings } from "lucide-react";
+import { Menu, Search, BookOpen, Mic2, Bookmark, Home, Settings, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -19,6 +19,7 @@ import { useState } from "react";
 const iconMap: Record<string, React.ElementType> = {
   Home,
   BookOpen,
+  Image,
   Mic2,
   Bookmark,
 };

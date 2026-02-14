@@ -47,6 +47,8 @@ export interface Attachment {
   size: string;
   url: string;
   duration?: number;       // seconds
+  /** Optional chapter/surah id (e.g. from Quran.Foundation) for lookup */
+  chapterId?: number;
 }
 
 export interface AudioFile {

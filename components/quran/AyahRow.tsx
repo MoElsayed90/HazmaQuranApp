@@ -9,6 +9,7 @@ import { useSettingsStore } from "@/lib/stores/use-settings";
 import { useAudioPlayerContext } from "@/hooks/use-audio-player";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { TafsirHtml } from "@/components/quran/TafsirHtml";
 import type { Ayah } from "@/lib/api/types";
 
 interface AyahRowProps {
@@ -17,6 +18,8 @@ interface AyahRowProps {
   surahName: string;
   isHighlighted?: boolean;
   audioUrl?: string;
+  /** Optional tafsir text for this verse */
+  tafsirText?: string;
 }
 
 export function AyahRow({
@@ -25,6 +28,7 @@ export function AyahRow({
   surahName,
   isHighlighted = false,
   audioUrl,
+  tafsirText,
 }: AyahRowProps) {
   const [actionsOpen, setActionsOpen] = useState(false);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarkStore();
@@ -137,6 +141,11 @@ export function AyahRow({
                 >
                   {ayah.translation}
                 </p>
+              )}
+              {tafsirText && (
+                <div className="mt-3 pl-3 border-l-2 border-primary/20">
+                  <TafsirHtml html={tafsirText} className="text-sm leading-relaxed" />
+                </div>
               )}
             </div>
 
