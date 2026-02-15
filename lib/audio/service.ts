@@ -12,11 +12,10 @@ const BITRATE = 128;
 /** Edition slugs supported by the CDN (reciter identifier) */
 export const AUDIO_EDITIONS = {
   alafasy: { slug: "ar.alafasy", name: "مشاري راشد العفاسي" },
-  husary: { slug: "ar.husary", name: "محمود خليل الحصري" },
+  /** المصحف المعلم — محمود خليل الحصري (نفس slug للآيات) */
+  husaryMuelam: { slug: "ar.husary", name: "محمود خليل الحصري (المصحف المعلم)" },
   minshawi: { slug: "ar.minshawi", name: "محمد صديق المنشاوي" },
   abdulbaset: { slug: "ar.abdulbasitmurattal", name: "عبد الباسط عبد الصمد" },
-  dosari: { slug: "ar.dosari", name: "ياسر الدوسري" },
-  soudais: { slug: "ar.sudais", name: "عبد الرحمن السديس" },
 } as const;
 
 export type AudioEditionId = keyof typeof AUDIO_EDITIONS;

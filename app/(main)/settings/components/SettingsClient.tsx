@@ -1,29 +1,45 @@
 "use client";
 
-import { Moon, Sun, Monitor, Type, BookOpenText, Trash2, Info } from "lucide-react";
+import { Moon, Sun, Monitor, Type, BookOpenText, Trash2, Info, Mic2, Download } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSettingsStore } from "@/lib/stores/use-settings";
 import { useBookmarkStore } from "@/lib/stores/use-bookmarks";
 import { FONT_SIZES } from "@/lib/constants";
+import { AUDIO_EDITIONS, type AudioEditionId } from "@/lib/audio/service";
+import { usePWAInstall } from "@/hooks/use-pwa-install";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 const fontSizeKeys = Object.keys(FONT_SIZES) as Array<keyof typeof FONT_SIZES>;
+const audioEditionIds = Object.keys(AUDIO_EDITIONS) as AudioEditionId[];
 
 export function SettingsClient() {
   const { theme, setTheme } = useTheme();
-  const { fontSize, setFontSize, showTranslation, setShowTranslation } =
+  const { fontSize, setFontSize, showTranslation, setShowTranslation, audioEdition, setAudioEdition } =
     useSettingsStore();
   const { bookmarks, clearAll } = useBookmarkStore();
+  const { canInstall, install } = usePWAInstall();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
+  const handleInstallApp = async () => {
+    const ok = await install();
+    if (ok) toast.success("جاري تثبيت التطبيق");
+  };
 
   const fontSizeIndex = fontSizeKeys.indexOf(fontSize);
 
@@ -131,6 +147,39 @@ export function SettingsClient() {
         </CardContent>
       </Card>
 
+      {/* صوت التلاوة — قارئ السور (يشمل المصحف المعلم للشيخ الحصري) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Mic2 className="h-4 w-4" />
+            صوت التلاوة
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <p className="text-sm">قارئ الصوت أثناء قراءة السور</p>
+            <p className="text-xs text-muted-foreground">
+              يشمل خيار المصحف المعلم للشيخ محمود خليل الحصري
+            </p>
+            <Select
+              value={audioEditionIds.includes(audioEdition as AudioEditionId) ? audioEdition : "alafasy"}
+              onValueChange={(v) => setAudioEdition(v)}
+            >
+              <SelectTrigger className="w-full max-w-xs mt-2" dir="rtl">
+                <SelectValue placeholder="اختر القارئ" />
+              </SelectTrigger>
+              <SelectContent>
+                {audioEditionIds.map((id) => (
+                  <SelectItem key={id} value={id} className="text-right">
+                    {AUDIO_EDITIONS[id].name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Data */}
       <Card>
         <CardHeader>
@@ -158,6 +207,27 @@ export function SettingsClient() {
           </div>
         </CardContent>
       </Card>
+
+      {/* تثبيت التطبيق (PWA) — يظهر عندما يدعم المتصفح التثبيت */}
+      {canInstall && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              تثبيت التطبيق
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-3">
+              ثبّت حمزة على جهازك لاستخدامه كتطبيق وتشغيله من الشاشة الرئيسية.
+            </p>
+            <Button className="gap-2" onClick={handleInstallApp}>
+              <Download className="h-4 w-4" />
+              تنزيل / تثبيت التطبيق
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* About */}
       <Card>

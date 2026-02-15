@@ -1,16 +1,23 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Play, Minus, Plus, BookOpenText } from "lucide-react";
+import { ArrowUp, Play, Minus, Plus, BookOpenText, Mic2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AyahRow } from "@/components/quran/AyahRow";
 import { useAudioPlayerContext } from "@/hooks/use-audio-player";
 import { useAudioStateStore } from "@/lib/stores/use-audio-state";
 import { useSettingsStore } from "@/lib/stores/use-settings";
-import { getAyahAudioUrl, getEditionName } from "@/lib/audio/service";
+import { getAyahAudioUrl, getEditionName, AUDIO_EDITIONS, type AudioEditionId } from "@/lib/audio/service";
 import { FONT_SIZES } from "@/lib/constants";
 import type { Surah, Ayah } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
@@ -22,6 +29,7 @@ interface SurahReaderClientProps {
 }
 
 const fontSizeKeys = Object.keys(FONT_SIZES) as Array<keyof typeof FONT_SIZES>;
+const audioEditionIds = Object.keys(AUDIO_EDITIONS) as AudioEditionId[];
 
 export function SurahReaderClient({
   surah,
@@ -31,7 +39,7 @@ export function SurahReaderClient({
   const { currentTrack, isPlaying, playQueue, currentTime, duration } = useAudioPlayerContext();
   const setLastRead = useAudioStateStore((s) => s.setLastRead);
   const setLastAudio = useAudioStateStore((s) => s.setLastAudio);
-  const { fontSize, setFontSize, showTranslation, setShowTranslation, audioEdition } =
+  const { fontSize, setFontSize, showTranslation, setShowTranslation, audioEdition, setAudioEdition } =
     useSettingsStore();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
@@ -229,6 +237,28 @@ export function SurahReaderClient({
               onCheckedChange={setShowTranslation}
               className="scale-75"
             />
+          </div>
+
+          <Separator orientation="vertical" className="h-5 hidden sm:block" />
+
+          {/* تحويل بين الشيوخ — اختيار القارئ أثناء الاستماع */}
+          <div className="flex items-center gap-2 min-w-0">
+            <Mic2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <Select
+              value={audioEditionIds.includes(audioEdition as AudioEditionId) ? audioEdition : "alafasy"}
+              onValueChange={(v) => setAudioEdition(v)}
+            >
+              <SelectTrigger className="w-[11rem] sm:w-[13rem] h-8 text-xs border-muted" dir="rtl">
+                <SelectValue placeholder="القارئ" />
+              </SelectTrigger>
+              <SelectContent>
+                {audioEditionIds.map((id) => (
+                  <SelectItem key={id} value={id} className="text-right">
+                    {AUDIO_EDITIONS[id].name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

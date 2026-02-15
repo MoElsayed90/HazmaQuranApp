@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
 
+/*
+ * Brand / Logo identity (حمزة Quran App)
+ * — Primary: deep green ~#2a5c3f (buttons, links, headings in light mode)
+ * — Accent:  metallic gold ~#c9a855 (highlights, icons)
+ * — Light:   cream/off-white ~#f8f6f0 (light mode background)
+ * — Dark:    neutral dark grey (background); primary/accent stay for contrast
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -100,7 +108,7 @@
   }
 }
 
-/* Base typography - larger for Arabic readability */
+/* Base typography - Arabic readability */
 html {
   font-size: 18px;
   transition: color-scheme 0.3s ease;

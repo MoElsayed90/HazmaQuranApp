@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Download, Mic2, Play, Pause } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SearchInput } from "@/components/quran/SearchInput";
 import { useAudioPlayerContext } from "@/hooks/use-audio-player";
 import type { Recitation } from "@/lib/api/types";
+import { downloadAudioFile } from "@/lib/download-audio";
 import { cn } from "@/lib/utils";
 
 interface ReciterDetailClientProps {
@@ -22,10 +25,27 @@ export function ReciterDetailClient({
   reciterImage,
   recitations,
 }: ReciterDetailClientProps) {
+  const recitationsWithClips = recitations.filter((r) => r.attachments.length > 0);
   const [imageError, setImageError] = useState(false);
+  const [searchSurah, setSearchSurah] = useState("");
+  const [selectedRecitationId, setSelectedRecitationId] = useState<number | null>(
+    recitationsWithClips[0]?.id ?? null
+  );
   const showImage = Boolean(reciterImage && !imageError);
   const { play, isTrackPlaying, currentTrack, progress, playQueue } =
     useAudioPlayerContext();
+
+  const selectedRecitation =
+    recitationsWithClips.find((r) => r.id === selectedRecitationId) ?? recitationsWithClips[0];
+
+  const filteredAttachments = useMemo(() => {
+    if (!selectedRecitation) return [];
+    const q = searchSurah.trim().toLowerCase();
+    if (!q) return selectedRecitation.attachments;
+    return selectedRecitation.attachments.filter((a) =>
+      a.title.toLowerCase().includes(q)
+    );
+  }, [selectedRecitation, searchSurah]);
 
   const handlePlayAttachment = (
     attachment: { id: number; title: string; url: string },
@@ -74,112 +94,169 @@ export function ReciterDetailClient({
         <div className="text-center sm:text-right">
           <h1 className="text-2xl font-bold">{reciterName}</h1>
           <p className="text-muted-foreground mt-1">
-            {recitations.length} تلاوة متاحة
+            {recitationsWithClips.length} تلاوة متاحة
           </p>
         </div>
       </div>
 
-      {/* Recitations */}
-      {recitations.length === 0 ? (
+      {/* Recitations — نعرض فقط التلاوات التي تحتوي على مقاطع */}
+      {recitationsWithClips.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           لا توجد تلاوات متاحة
         </div>
       ) : (
         <div className="space-y-4">
-          {recitations.map((recitation) => (
-            <Card key={recitation.id}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">{recitation.title}</CardTitle>
+          {/* تلاوات جنب بعض — الضغط يفتح السور بداخلها */}
+          <div className="flex flex-wrap gap-2">
+            {recitationsWithClips.map((recitation) => (
+              <Button
+                key={recitation.id}
+                variant={selectedRecitationId === recitation.id ? "default" : "outline"}
+                size="sm"
+                className="shrink-0"
+                onClick={() => setSelectedRecitationId(recitation.id)}
+              >
+                {recitation.title}
+                <span
+                  className={cn(
+                    "mr-1.5 text-xs font-medium",
+                    selectedRecitationId === recitation.id
+                      ? "text-primary-foreground/95"
+                      : "text-foreground/90"
+                  )}
+                >
+                  ({recitation.attachments.length})
+                </span>
+              </Button>
+            ))}
+          </div>
+
+          {/* السور للتلاوة المختارة فقط — شبكة RTL + بحث */}
+          {selectedRecitation && (
+            <Card className="overflow-hidden">
+              <CardHeader className="sticky top-0 z-10 border-b bg-card pb-3 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <CardTitle className="text-base truncate">{selectedRecitation.title}</CardTitle>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="gap-2"
-                    onClick={() => handlePlayAll(recitation)}
+                    className="gap-2 shrink-0"
+                    onClick={() => handlePlayAll(selectedRecitation)}
                   >
                     <Play className="h-3.5 w-3.5" />
                     تشغيل الكل
                   </Button>
                 </div>
+                <SearchInput
+                  value={searchSurah}
+                  onChange={setSearchSurah}
+                  placeholder="ابحث عن سورة..."
+                  className="w-full max-w-xs"
+                />
                 <p className="text-xs text-muted-foreground">
-                  {recitation.attachments.length} مقطع
+                  {filteredAttachments.length} مقطع
+                  {searchSurah.trim() && filteredAttachments.length !== selectedRecitation.attachments.length && (
+                    <span className="text-muted-foreground/80"> (مصفى)</span>
+                  )}
                 </p>
               </CardHeader>
-              <CardContent>
-                <ScrollArea className="max-h-80">
-                  <div className="space-y-1">
-                    {recitation.attachments.map((attachment) => {
-                      const playing = isTrackPlaying(attachment.id);
-                      return (
-                        <div
-                          key={attachment.id}
-                          className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
-                            playing
-                              ? "bg-primary/5"
-                              : "hover:bg-muted/50"
-                          )}
-                        >
-                          {/* Play button */}
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 shrink-0"
-                            onClick={() =>
-                              handlePlayAttachment(
-                                attachment,
-                                recitation.title
-                              )
-                            }
-                          >
-                            {playing ? (
-                              <Pause className="h-4 w-4 text-primary" />
-                            ) : (
-                              <Play className="h-4 w-4" />
+              <CardContent className="p-0">
+                <ScrollArea className="h-[min(70vh,32rem)] w-full">
+                  <div
+                    dir="rtl"
+                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 p-2"
+                  >
+                    {filteredAttachments.length === 0 ? (
+                      <div className="col-span-full text-center py-8 text-muted-foreground text-sm">
+                        {searchSurah.trim() ? "لا توجد سورة تطابق البحث" : "لا توجد مقاطع"}
+                      </div>
+                    ) : (
+                      filteredAttachments.map((attachment, index) => {
+                        const playing = isTrackPlaying(attachment.id);
+                        const isCurrentTrack = currentTrack?.id === attachment.id;
+                        const originalIndex = selectedRecitation.attachments.findIndex(
+                          (a) => a.id === attachment.id
+                        );
+                        return (
+                          <div
+                            key={attachment.id}
+                            className={cn(
+                              "flex min-h-[4.5rem] flex-col rounded-lg border bg-card px-3 py-2.5 transition-colors",
+                              playing && isCurrentTrack
+                                ? "border-primary/30 bg-primary/10 ring-1 ring-primary/20"
+                                : "border-transparent hover:bg-muted/50"
                             )}
-                          </Button>
-
-                          {/* Info */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm truncate">
-                              {attachment.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {attachment.size}
-                            </p>
-                          </div>
-
-                          {/* Progress */}
-                          {playing && currentTrack?.id === attachment.id && (
-                            <Progress
-                              value={progress}
-                              className="w-20 h-1.5"
-                            />
-                          )}
-
-                          {/* Download */}
-                          <a
-                            href={attachment.url}
-                            download
-                            className="shrink-0"
-                            aria-label="تحميل"
                           >
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                            >
-                              <Download className="h-3.5 w-3.5" />
-                            </Button>
-                          </a>
-                        </div>
-                      );
-                    })}
+                            <div className="flex flex-1 items-center gap-2">
+                              <span
+                                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground"
+                                aria-hidden
+                              >
+                                {(originalIndex >= 0 ? originalIndex : index) + 1}
+                              </span>
+                              <div className="flex-1 min-w-0 text-right">
+                                <p className="text-sm font-medium truncate">
+                                  {attachment.title}
+                                </p>
+                                <p className="text-xs text-foreground/75 mt-0.5">
+                                  {attachment.size}
+                                </p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 shrink-0"
+                                onClick={() =>
+                                  handlePlayAttachment(
+                                    attachment,
+                                    selectedRecitation.title
+                                  )
+                                }
+                                aria-label={playing ? "إيقاف" : "تشغيل"}
+                              >
+                                {playing && isCurrentTrack ? (
+                                  <Pause className="h-4 w-4 text-primary" />
+                                ) : (
+                                  <Play className="h-4 w-4 text-muted-foreground" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 shrink-0"
+                                aria-label="تحميل"
+                                onClick={async () => {
+                                  try {
+                                    const safeName = (attachment.title || "recitation")
+                                      .replace(/[/\\?%*:|"<>]/g, "-")
+                                      .trim() || "recitation";
+                                    await downloadAudioFile(attachment.url, safeName);
+                                    toast.success("تم بدء التحميل");
+                                  } catch {
+                                    toast.error("فشل التحميل", {
+                                      description: "تحقق من الاتصال أو جرّب مرة أخرى.",
+                                    });
+                                  }
+                                }}
+                              >
+                                <Download className="h-3.5 w-3.5 text-muted-foreground" />
+                              </Button>
+                            </div>
+                            {playing && isCurrentTrack && (
+                              <Progress
+                                value={progress}
+                                className="mt-2 h-1 w-full"
+                              />
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
                   </div>
                 </ScrollArea>
               </CardContent>
             </Card>
-          ))}
+          )}
         </div>
       )}
     </div>

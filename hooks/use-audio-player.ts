@@ -91,6 +91,8 @@ export function useAudioPlayer(): AudioPlayerContextType {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const stateRef = useRef(state);
   stateRef.current = state;
+  /** عند الضغط على X (stop) نضع هذا true حتى لا يظهر toast الخطأ الناتج عن إلغاء التحميل */
+  const ignoreNextErrorRef = useRef(false);
 
   // Ensure audio element exists
   const getAudio = useCallback(() => {
@@ -224,6 +226,7 @@ export function useAudioPlayer(): AudioPlayerContextType {
   }, [pause, resume]);
 
   const stop = useCallback(() => {
+    ignoreNextErrorRef.current = true;
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
@@ -311,6 +314,10 @@ export function useAudioPlayer(): AudioPlayerContextType {
       }
     };
     const onError = (e: Event) => {
+      if (ignoreNextErrorRef.current) {
+        ignoreNextErrorRef.current = false;
+        return;
+      }
       const el = e.target as HTMLAudioElement;
       const code = el?.error?.code;
       const msg = el?.error?.message || "فشل تحميل الصوت";
