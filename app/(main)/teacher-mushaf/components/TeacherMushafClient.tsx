@@ -183,15 +183,18 @@ export function TeacherMushafClient() {
                           className="h-8 w-8 shrink-0"
                           aria-label="تحميل أول آية"
                           onClick={async () => {
+                            const toastId = "download-audio";
+                            toast.loading("جاري التحميل... الملفات الكبيرة (سور طويلة) تحتاج وقتاً لبدء التحميل، انتظر قليلاً.", { id: toastId });
                             try {
                               await downloadAudioFile(
                                 getFirstAyahDownloadUrl(surah.id),
                                 `surah-${surah.id}-ayah-1.mp3`
                               );
-                              toast.success("تم بدء التحميل");
+                              toast.success("تم بدء التحميل", { id: toastId });
                             } catch {
                               toast.error("فشل التحميل", {
                                 description: "تحقق من الاتصال أو جرّب مرة أخرى.",
+                                id: toastId,
                               });
                             }
                           }}

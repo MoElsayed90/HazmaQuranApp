@@ -91,21 +91,28 @@ export function ReciterDetailClient({
             </div>
           )}
         </div>
-        <div className="text-center sm:text-right">
+        <div className="text-center sm:text-right flex-1 min-w-0">
           <h1 className="text-2xl font-bold">{reciterName}</h1>
           <p className="text-muted-foreground mt-1">
             {recitationsWithClips.length} تلاوة متاحة
           </p>
+          {/* عرض أسماء القراءات (مصحف كذا و مصحف كذا) بشكل مختصر */}
+          {recitationsWithClips.length > 0 && (
+            <p className="text-xs text-muted-foreground/90 mt-2 line-clamp-2 max-w-xl">
+              {recitationsWithClips.map((r) => r.title).join(" — ")}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Recitations — نعرض فقط التلاوات التي تحتوي على مقاطع */}
+      {/* القراءات المتاحة — مصحف كذا و مصحف كذا داخل كل شيخ */}
       {recitationsWithClips.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           لا توجد تلاوات متاحة
         </div>
       ) : (
         <div className="space-y-4">
+          <h2 className="text-base font-semibold text-foreground">القراءات المتاحة</h2>
           {/* تلاوات جنب بعض — الضغط يفتح السور بداخلها */}
           <div className="flex flex-wrap gap-2">
             {recitationsWithClips.map((recitation) => (
@@ -113,13 +120,16 @@ export function ReciterDetailClient({
                 key={recitation.id}
                 variant={selectedRecitationId === recitation.id ? "default" : "outline"}
                 size="sm"
-                className="shrink-0"
+                className="shrink-0 max-w-full sm:max-w-[20rem] min-w-0"
                 onClick={() => setSelectedRecitationId(recitation.id)}
+                title={recitation.title}
               >
-                {recitation.title}
+                <span className="truncate block text-right w-full min-w-0">
+                  {recitation.title}
+                </span>
                 <span
                   className={cn(
-                    "mr-1.5 text-xs font-medium",
+                    "mr-1.5 text-xs font-medium shrink-0",
                     selectedRecitationId === recitation.id
                       ? "text-primary-foreground/95"
                       : "text-foreground/90"
@@ -226,15 +236,18 @@ export function ReciterDetailClient({
                                 className="h-8 w-8 shrink-0"
                                 aria-label="تحميل"
                                 onClick={async () => {
+                                  const toastId = "download-audio";
+                                  toast.loading("جاري التحميل... الملفات الكبيرة (سور طويلة) تحتاج وقتاً لبدء التحميل، انتظر قليلاً.", { id: toastId });
                                   try {
                                     const safeName = (attachment.title || "recitation")
                                       .replace(/[/\\?%*:|"<>]/g, "-")
                                       .trim() || "recitation";
                                     await downloadAudioFile(attachment.url, safeName);
-                                    toast.success("تم بدء التحميل");
+                                    toast.success("تم بدء التحميل", { id: toastId });
                                   } catch {
                                     toast.error("فشل التحميل", {
                                       description: "تحقق من الاتصال أو جرّب مرة أخرى.",
+                                      id: toastId,
                                     });
                                   }
                                 }}

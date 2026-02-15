@@ -51,7 +51,7 @@ export default function Navbar() {
             alt="حمزة"
             width={200}
             height={20}
-            className="h-20 w-auto  object-contain"
+            className="h-12 w-auto object-contain md:h-20"
             priority
           />
         </Link>
@@ -81,7 +81,7 @@ export default function Navbar() {
 
         {/* Right side actions */}
         <div className="flex items-center gap-1">
-          <Link href="/surahs">
+          <Link href="/search">
             <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="بحث">
               <Search className="h-4 w-4" />
             </Button>

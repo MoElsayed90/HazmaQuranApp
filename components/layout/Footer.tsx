@@ -101,8 +101,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-5 border-t text-center text-muted-foreground/80 text-sm">
-          <p>© {new Date().getFullYear()} حمزة — تطبيق القرآن الكريم. Developed by Eng. Mohamed Elsayed.</p>
+        <div className="mt-8 pt-5 border-t text-center text-muted-foreground/80 text-sm px-2">
+          <p className="break-words">© {new Date().getFullYear()} حمزة — تطبيق القرآن الكريم. Developed by Eng. Mohamed Elsayed.</p>
         </div>
       </div>
     </footer>

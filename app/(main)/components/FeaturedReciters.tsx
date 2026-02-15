@@ -16,7 +16,7 @@ export function FeaturedReciters({ reciters }: FeaturedRecitersProps) {
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">أشهر القراء</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-foreground">أشهر القراء</h2>
         <Link href="/reciters">
           <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground">
             عرض الكل

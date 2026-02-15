@@ -32,14 +32,15 @@ const FEATURES = [
 
 export function AboutSection() {
   return (
-    <section className="py-16 md:py-20">
+    <section className="py-16 md:py-20 bg-muted/20 border-y border-border/50">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-4">
           ما هو تطبيق حمزة؟
         </h2>
         <p className="text-base md:text-lg text-muted-foreground text-center max-w-2xl mx-auto mb-12 leading-relaxed">
           حمزة تطبيق قرآن كريم يجمع بين القراءة والاستماع والحفظ. تصفح السور، استمع لأشهر القراء،
           واستخدم المصحف المعلم للشيخ الحصري لربط الصوت بالنص أثناء الحفظ.
+          <span className="block mt-2 text-sm text-muted-foreground/80">نسخة تجريبية — نرحب بملاحظاتكم.</span>
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {FEATURES.map(({ icon: Icon, title, description }) => (

@@ -11,7 +11,7 @@ export default function MainLayout({
   return (
     <>
       <Navbar />
-      <main className="min-h-[calc(100vh-3.5rem)] pb-20">{children}</main>
+      <main className="min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-6rem)] pb-20">{children}</main>
       <Footer />
       <PwaInstallBanner />
       <AudioPlayerMini />

@@ -54,13 +54,18 @@ export function ReciterCard({ reciter, index = 0 }: ReciterCardProps) {
           </div>
 
           {/* Info */}
-          <div className="p-4 text-center">
+          <div className="p-4 text-center min-w-0">
             <h3 className="font-semibold text-sm truncate px-1">{reciter.name}</h3>
-            {reciter.recitationCount != null && reciter.recitationCount > 0 && (
+            {(reciter.recitationCount != null && reciter.recitationCount > 0) ||
+            (reciter.recitationIds && reciter.recitationIds.length > 0) ? (
               <p className="text-xs text-muted-foreground mt-1">
-                {reciter.recitationCount} تلاوة
+                {reciter.recitationIds && reciter.recitationIds.length > 1
+                  ? `${reciter.recitationIds.length} قراءات (مصاحف)`
+                  : reciter.recitationCount != null && reciter.recitationCount > 0
+                    ? `${reciter.recitationCount} تلاوة`
+                    : "عرض القراءات"}
               </p>
-            )}
+            ) : null}
           </div>
         </div>
       </Link>

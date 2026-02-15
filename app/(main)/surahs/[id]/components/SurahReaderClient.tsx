@@ -200,7 +200,7 @@ export function SurahReaderClient({
 
       {/* Reading settings bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card px-4 py-3 mb-6">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 min-w-0">
           {/* Font size */}
           <div className="flex items-center gap-1.5">
             <Button
@@ -242,13 +242,13 @@ export function SurahReaderClient({
           <Separator orientation="vertical" className="h-5 hidden sm:block" />
 
           {/* تحويل بين الشيوخ — اختيار القارئ أثناء الاستماع */}
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 max-w-full">
             <Mic2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
             <Select
               value={audioEditionIds.includes(audioEdition as AudioEditionId) ? audioEdition : "alafasy"}
               onValueChange={(v) => setAudioEdition(v)}
             >
-              <SelectTrigger className="w-[11rem] sm:w-[13rem] h-8 text-xs border-muted" dir="rtl">
+              <SelectTrigger className="w-full min-w-0 max-w-[11rem] sm:max-w-[13rem] h-8 text-xs border-muted" dir="rtl">
                 <SelectValue placeholder="القارئ" />
               </SelectTrigger>
               <SelectContent>

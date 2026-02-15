@@ -14,6 +14,7 @@ import type {
   AlQuranSurahDetail,
 } from "../types";
 import { cachedFetch } from "../client";
+import { normalizeArabicForSearch } from "@/lib/utils";
 
 const BASE_URL = "https://api.alquran.cloud/v1";
 
@@ -118,15 +119,20 @@ export class AlQuranCloudProvider implements QuranDataSource {
 
   async searchSurahs(query: string): Promise<Surah[]> {
     const surahs = await this.getSurahs();
-    const normalizedQuery = query.trim().toLowerCase();
+    const raw = query.trim();
+    const normalizedQuery = raw.toLowerCase();
+    const normalizedArabic = normalizeArabicForSearch(raw);
 
-    return surahs.filter(
-      (s) =>
-        s.name.includes(query) ||
+    return surahs.filter((s) => {
+      const nameNorm = normalizeArabicForSearch(s.name);
+      return (
+        nameNorm.includes(normalizedArabic) ||
+        normalizedArabic.includes(nameNorm) ||
         s.englishName.toLowerCase().includes(normalizedQuery) ||
         s.englishNameTranslation.toLowerCase().includes(normalizedQuery) ||
-        String(s.id) === normalizedQuery
-    );
+        String(s.id) === raw
+      );
+    });
   }
 
   async getAudioUrl(surahId: number, reciterId: number): Promise<string | null> {

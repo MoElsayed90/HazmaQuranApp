@@ -105,7 +105,7 @@ export function SettingsClient() {
             step={1}
             onValueChange={(val) => setFontSize(fontSizeKeys[val[0]])}
           />
-          <div className="flex justify-between text-xs text-muted-foreground">
+          <div className="flex flex-wrap justify-between gap-x-1 gap-y-0.5 text-xs text-muted-foreground">
             {fontSizeKeys.map((key) => (
               <span
                 key={key}

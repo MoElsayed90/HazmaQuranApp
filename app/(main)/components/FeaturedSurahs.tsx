@@ -16,7 +16,7 @@ export function FeaturedSurahs({ surahs }: FeaturedSurahsProps) {
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">سور مميزة</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-foreground">سور مميزة</h2>
         <Link href="/surahs">
           <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground">
             عرض الكل

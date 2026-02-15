@@ -14,7 +14,7 @@ export function ContinueSection() {
 
   return (
     <section className="space-y-5">
-      <h2 className="text-xl font-semibold">
+      <h2 className="text-xl md:text-2xl font-bold text-foreground">
         {hasContinue ? "أكمل من حيث توقفت" : "وصول سريع"}
       </h2>
 
