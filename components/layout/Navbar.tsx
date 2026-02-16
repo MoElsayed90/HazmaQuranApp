@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { Menu, Search, BookOpen, Mic2, Bookmark, Home, Settings, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +16,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "@/lib/constants";
 import { usePWAInstall } from "@/hooks/use-pwa-install";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const iconMap: Record<string, React.ElementType> = {
   Home,
@@ -29,12 +28,7 @@ const iconMap: Record<string, React.ElementType> = {
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const { canInstall, install, isInstalled } = usePWAInstall();
-  useEffect(() => setMounted(true), []);
-
-  const logoSrc = mounted && resolvedTheme === "dark" ? "/logo_Dark (1).png" : "/light_logo.png";
+  const { install, isInstalled } = usePWAInstall();
 
   const handleInstallClick = async () => {
     await install();
@@ -44,14 +38,22 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex md:h-16 h-16 items-center justify-between px-4">
-        {/* Logo only — no duplicate text; size fits navbar */}
-        <Link href="/" className="flex items-center shrink-0">
+        {/* Logo: dual image, CSS shows one by .dark (next-themes sets before paint → no flash) */}
+        <Link href="/" className="flex items-center shrink-0 relative">
           <Image
-            src={logoSrc}
+            src="/logo_Dark (1).png"
             alt="حمزة"
             width={200}
             height={90}
-            className="h-7 w-auto object-contain md:h-10"
+            className="h-7 w-auto object-contain md:h-10 hidden dark:block"
+            priority
+          />
+          <Image
+            src="/light_logo(1).png"
+            alt="حمزة"
+            width={200}
+            height={90}
+            className="h-7 w-auto object-contain md:h-10 block dark:hidden"
             priority
           />
         </Link>
