@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchInput } from "@/components/quran/SearchInput";
 import { useAudioPlayerContext } from "@/hooks/use-audio-player";
 import type { Recitation } from "@/lib/api/types";
+import { getSurahIdFromArabicTitle, getSurahDisplayName } from "@/lib/constants";
 import { downloadAudioFile } from "@/lib/download-audio";
 import { cn } from "@/lib/utils";
 
@@ -55,21 +56,33 @@ export function ReciterDetailClient({
       toggle();
       return;
     }
+    const surahId = getSurahIdFromArabicTitle(attachment.title);
+    const surahName = surahId != null ? getSurahDisplayName(surahId) : attachment.title;
     play({
       id: attachment.id,
       url: attachment.url,
       title: attachment.title,
       subtitle: `${reciterName} - ${recitationTitle}`,
+      surahId: surahId ?? undefined,
+      surahName,
+      reciterName: `${reciterName} - ${recitationTitle}`,
     });
   };
 
   const handlePlayAll = (recitation: Recitation) => {
-    const tracks = recitation.attachments.map((a) => ({
-      id: a.id,
-      url: a.url,
-      title: a.title,
-      subtitle: `${reciterName} - ${recitation.title}`,
-    }));
+    const tracks = recitation.attachments.map((a) => {
+      const surahId = getSurahIdFromArabicTitle(a.title);
+      const surahName = surahId != null ? getSurahDisplayName(surahId) : a.title;
+      return {
+        id: a.id,
+        url: a.url,
+        title: a.title,
+        subtitle: `${reciterName} - ${recitation.title}`,
+        surahId: surahId ?? undefined,
+        surahName,
+        reciterName: `${reciterName} - ${recitation.title}`,
+      };
+    });
     if (tracks.length > 0) {
       playQueue(tracks);
     }
@@ -116,24 +129,24 @@ export function ReciterDetailClient({
         </div>
       ) : (
         <div className="space-y-4">
-          <h2 className="text-base font-semibold text-foreground">القراءات المتاحة</h2>
+          <h2 className="text-lg font-semibold text-foreground">القراءات المتاحة</h2>
           {/* تلاوات جنب بعض — الضغط يفتح السور بداخلها */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             {recitationsWithClips.map((recitation) => (
               <Button
                 key={recitation.id}
                 variant={selectedRecitationId === recitation.id ? "default" : "outline"}
-                size="sm"
-                className="shrink-0 max-w-full sm:max-w-[20rem] min-w-0"
+                size="default"
+                className="shrink-0  min-w-0 h-auto py-2.5 px-4 text-sm"
                 onClick={() => setSelectedRecitationId(recitation.id)}
                 title={recitation.title}
               >
-                <span className="truncate block text-right w-full min-w-0">
+                <span className=" block text-right w-full min-w-0 text-sm font-bold">
                   {recitation.title}
                 </span>
                 <span
                   className={cn(
-                    "mr-1.5 text-xs font-medium shrink-0",
+                    "mr-1.5 text-sm font-bold shrink-0",
                     selectedRecitationId === recitation.id
                       ? "text-primary-foreground/95"
                       : "text-foreground/90"

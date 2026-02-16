@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useRef, useState, createContext, useContext } from "react";
 import { toast } from "sonner";
 import type { PlaybackSpeed } from "@/lib/constants";
+import { SURAH_NAMES_AR, getSurahDisplayName } from "@/lib/constants";
 import { resolveAudioUrl } from "@/lib/audio/url-resolver";
+import { useAudioStateStore } from "@/lib/stores/use-audio-state";
 
 const DEV = typeof process !== "undefined" && process.env.NODE_ENV === "development";
 
@@ -14,6 +16,10 @@ export interface AudioTrack {
   subtitle?: string;
   surahId?: number;
   ayahNumber?: number;
+  /** للعرض في "آخر استماع" */
+  surahName?: string;
+  /** اسم القارئ أو المصحف للعرض في "آخر استماع" */
+  reciterName?: string;
 }
 
 export interface AudioPlayerState {
@@ -293,6 +299,56 @@ export function useAudioPlayer(): AudioPlayerContextType {
       stateRef.current.currentTrack?.id === id && stateRef.current.isPlaying,
     []
   );
+
+  // تحديث "آخر استماع" من أي مكان (صفحة السورة أو صفحة القارئ)
+  const setLastAudio = useAudioStateStore((s) => s.setLastAudio);
+  const lastAudioWriteRef = useRef(0);
+  const wasPlayingRef = useRef(false);
+  useEffect(() => {
+    const track = stateRef.current.currentTrack;
+    const { isPlaying, currentTime, duration } = stateRef.current;
+    const surahId = track?.surahId;
+    if (!track?.url || surahId == null) return;
+
+    const surahName =
+      track.surahName ?? (SURAH_NAMES_AR[surahId] ? getSurahDisplayName(surahId) : `سورة ${surahId}`);
+    const reciterName = track.reciterName ?? track.subtitle ?? "";
+
+    if (isPlaying) {
+      wasPlayingRef.current = true;
+      const progress = duration > 0 ? currentTime / duration : 0;
+      const now = Date.now();
+      const throttled = lastAudioWriteRef.current > 0 && now - lastAudioWriteRef.current < 5000;
+      if (!throttled) {
+        lastAudioWriteRef.current = now;
+        setLastAudio({
+          surahId,
+          surahName,
+          ayahNumber: track.ayahNumber,
+          reciterId: 0,
+          reciterName,
+          audioUrl: track.url,
+          progress,
+          timestamp: now,
+        });
+      }
+    } else {
+      if (wasPlayingRef.current) {
+        wasPlayingRef.current = false;
+        const progress = duration > 0 ? currentTime / duration : 0;
+        setLastAudio({
+          surahId,
+          surahName,
+          ayahNumber: track.ayahNumber,
+          reciterId: 0,
+          reciterName,
+          audioUrl: track.url,
+          progress,
+          timestamp: Date.now(),
+        });
+      }
+    }
+  }, [state.currentTrack, state.isPlaying, state.currentTime, state.duration, setLastAudio]);
 
   // Set up audio event listeners
   useEffect(() => {

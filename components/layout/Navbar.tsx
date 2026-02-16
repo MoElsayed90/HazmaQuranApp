@@ -38,8 +38,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex md:h-16 h-16 items-center justify-between px-4">
-        {/* Logo: dual image, CSS shows one by .dark (next-themes sets before paint → no flash) */}
-        <Link href="/" className="flex items-center shrink-0 relative">
+        {/* Logo: ثنائي حسب الثيم — suppressHydrationWarning لتجنب خطأ عند اختلاف سكربت الثيم */}
+        <Link href="/" className="flex items-center shrink-0 relative" suppressHydrationWarning>
           <Image
             src="/logo_Dark (1).png"
             alt="حمزة"

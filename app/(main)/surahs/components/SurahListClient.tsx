@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SurahCard } from "@/components/quran/SurahCard";
 import { SearchInput } from "@/components/quran/SearchInput";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -57,6 +58,13 @@ export function SurahListClient({ surahs }: SurahListClientProps) {
 
   return (
     <div className="space-y-4">
+      <Breadcrumb
+        items={[
+          { label: "الرئيسية", href: "/" },
+          { label: "القرآن الكريم" },
+        ]}
+        className="mb-2"
+      />
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">سور القرآن الكريم</h1>

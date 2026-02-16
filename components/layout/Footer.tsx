@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { MessageCircle, Linkedin, BookOpen, Mic2, GraduationCap, Bookmark, Home } from "lucide-react";
 
 const WHATSAPP_NUMBER = "201270135135";
@@ -13,7 +14,22 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
           {/* التطبيق */}
           <div>
-            <h3 className="font-semibold text-base text-foreground mb-3">حمزة</h3>
+            <Link href="/" className="flex items-center shrink-0 relative w-fit mb-3" suppressHydrationWarning>
+              <Image
+                src="/logo_Dark (1).png"
+                alt="حمزة"
+                width={200}
+                height={90}
+                className="h-6 w-auto object-contain md:h-7 hidden dark:block"
+              />
+              <Image
+                src="/light_logo(1).png"
+                alt="حمزة"
+                width={200}
+                height={90}
+                className="h-6 w-auto object-contain md:h-7 block dark:hidden"
+              />
+            </Link>
             <p className="text-muted-foreground leading-relaxed text-sm max-w-xs">
               تطبيق القرآن الكريم — تصفح القرآن الكريم، استمع لأشهر القراء، واستخدم المصحف المعلم للحفظ.
             </p>

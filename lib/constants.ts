@@ -69,6 +69,35 @@ export function getSurahAyahRange(surahId: number): [number, number] {
   return [start, start + count - 1];
 }
 
+/** إزالة التشكيل من النص العربي لتحسين المطابقة */
+function stripArabicDiacritics(s: string): string {
+  return s.replace(/[\u064b-\u0652\u0670]/g, "").trim();
+}
+
+/** استخراج رقم السورة من عنوان عربي مثل "سورة الفاتحة" أو "سُورَةُ الْفَاتِحَةِ" */
+export function getSurahIdFromArabicTitle(title: string): number | null {
+  const raw = title
+    .replace(/\s*سُورَةُ?\s*/u, " ")
+    .replace(/\s*سورة\s*/i, " ")
+    .replace(/\s*\(.*\)\s*$/, "")
+    .trim();
+  const normalized = stripArabicDiacritics(raw);
+  if (!normalized) return null;
+  for (let id = 1; id <= 114; id++) {
+    const name = SURAH_NAMES_AR[id];
+    if (!name) continue;
+    const nameNorm = stripArabicDiacritics(name);
+    if (normalized === nameNorm || normalized.endsWith(nameNorm)) return id;
+  }
+  return null;
+}
+
+/** الاسم الكامل للسورة للعرض مثل "سورة الفاتحة" */
+export function getSurahDisplayName(surahId: number): string {
+  const name = SURAH_NAMES_AR[surahId];
+  return name ? `سورة ${name}` : `سورة ${surahId}`;
+}
+
 // Navigation links
 export const NAV_LINKS = [
   { href: "/", label: "الرئيسية", icon: "Home" },

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Play, Minus, Plus, BookOpenText, Mic2 } from "lucide-react";
+import Link from "next/link";
+import { ArrowUp, Play, Minus, Plus, BookOpenText, Mic2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -14,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AyahRow } from "@/components/quran/AyahRow";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useAudioPlayerContext } from "@/hooks/use-audio-player";
 import { useAudioStateStore } from "@/lib/stores/use-audio-state";
 import { useSettingsStore } from "@/lib/stores/use-settings";
@@ -38,7 +40,6 @@ export function SurahReaderClient({
 }: SurahReaderClientProps) {
   const { currentTrack, isPlaying, playQueue, currentTime, duration } = useAudioPlayerContext();
   const setLastRead = useAudioStateStore((s) => s.setLastRead);
-  const setLastAudio = useAudioStateStore((s) => s.setLastAudio);
   const { fontSize, setFontSize, showTranslation, setShowTranslation, audioEdition, setAudioEdition } =
     useSettingsStore();
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -114,49 +115,6 @@ export function SurahReaderClient({
 
   const editionName = getEditionName(audioEdition);
 
-  // Persist last audio position (throttled while playing; once on pause/end)
-  const lastAudioWriteRef = useRef(0);
-  const wasPlayingRef = useRef(false);
-  useEffect(() => {
-    const track = currentTrack;
-    const hasSurahTrack = track?.surahId === surah.id && track?.ayahNumber != null;
-    if (!hasSurahTrack || !track?.url) return;
-
-    if (isPlaying) {
-      wasPlayingRef.current = true;
-      const progress = duration > 0 ? currentTime / duration : 0;
-      const now = Date.now();
-      if (now - lastAudioWriteRef.current >= 5000) {
-        lastAudioWriteRef.current = now;
-        setLastAudio({
-          surahId: surah.id,
-          surahName: surah.name,
-          ayahNumber: track.ayahNumber!,
-          reciterId: 0,
-          reciterName: editionName,
-          audioUrl: track.url,
-          progress,
-          timestamp: now,
-        });
-      }
-    } else {
-      if (wasPlayingRef.current) {
-        wasPlayingRef.current = false;
-        const progress = duration > 0 ? currentTime / duration : 0;
-        setLastAudio({
-          surahId: surah.id,
-          surahName: surah.name,
-          ayahNumber: track.ayahNumber!,
-          reciterId: 0,
-          reciterName: editionName,
-          audioUrl: track.url,
-          progress,
-          timestamp: Date.now(),
-        });
-      }
-    }
-  }, [currentTrack, isPlaying, currentTime, duration, surah.id, surah.name, setLastAudio, editionName]);
-
   const handlePlayAll = () => {
     const tracks = ayahs.map((a) => ({
       id: `${surah.id}-${a.number}`,
@@ -165,6 +123,8 @@ export function SurahReaderClient({
       subtitle: `${surah.name} - ${editionName}`,
       surahId: surah.id,
       ayahNumber: a.number,
+      surahName: surah.name,
+      reciterName: editionName,
     }));
     if (tracks.length > 0) {
       playQueue(tracks);
@@ -183,6 +143,15 @@ export function SurahReaderClient({
   return (
     <div className="container mx-auto px-4 py-6">
       <div ref={topRef} />
+
+      {/* Breadcrumb: القرآن الكريم > سورة X */}
+      <Breadcrumb
+        items={[
+          { label: "القرآن الكريم", href: "/surahs" },
+          { label: surah.name },
+        ]}
+        className="mb-4"
+      />
 
       {/* Surah header */}
       <div className="text-center mb-6">
@@ -300,26 +269,33 @@ export function SurahReaderClient({
             surahName={surah.name}
             isHighlighted={currentAyahNumber === ayah.number}
             audioUrl={getAyahAudioUrl(ayah.numberInQuran, audioEdition)}
+            reciterName={editionName}
           />
         ))}
       </div>
 
       {/* Surah navigation */}
       <div className="flex justify-between items-center mt-8 pt-6 border-t">
-        {surah.id > 1 && (
-          <a href={`/surahs/${surah.id - 1}`}>
-            <Button variant="outline" size="sm">
+        {surah.id > 1 ? (
+          <Link href={`/surahs/${surah.id - 1}`}>
+            <Button variant="outline" size="sm" className="gap-1">
+              <ChevronRight className="h-3.5 w-3.5" />
               السورة السابقة
             </Button>
-          </a>
+          </Link>
+        ) : (
+          <div />
         )}
         <div />
-        {surah.id < 114 && (
-          <a href={`/surahs/${surah.id + 1}`}>
-            <Button variant="outline" size="sm">
+        {surah.id < 114 ? (
+          <Link href={`/surahs/${surah.id + 1}`}>
+            <Button variant="outline" size="sm" className="gap-1">
               السورة التالية
+              <ChevronRight className="h-3.5 w-3.5 rotate-180" />
             </Button>
-          </a>
+          </Link>
+        ) : (
+          <div />
         )}
       </div>
 

@@ -17,6 +17,8 @@ interface AyahRowProps {
   surahName: string;
   isHighlighted?: boolean;
   audioUrl?: string;
+  /** اسم القارئ/المصحف لـ "آخر استماع" */
+  reciterName?: string;
 }
 
 export function AyahRow({
@@ -25,6 +27,7 @@ export function AyahRow({
   surahName,
   isHighlighted = false,
   audioUrl,
+  reciterName,
 }: AyahRowProps) {
   const [actionsOpen, setActionsOpen] = useState(false);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarkStore();
@@ -85,9 +88,11 @@ export function AyahRow({
       id: trackId,
       url: audioUrl,
       title: `الآية ${ayah.number}`,
-      subtitle: surahName,
+      subtitle: `${surahName}${reciterName ? ` - ${reciterName}` : ""}`,
       surahId,
       ayahNumber: ayah.number,
+      surahName: `سورة ${surahName}`,
+      reciterName,
     });
   };
 
@@ -136,10 +141,10 @@ export function AyahRow({
               {showTranslation && ayah.translation && (
                 <div className="rounded-md bg-muted/40 border-r-2 border-primary/20 py-3 px-3.5 text-right">
                   <p
-                    className="text-muted-foreground leading-loose"
+                    className="text-muted-foreground"
                     style={{
                       fontSize: "var(--translation-font-size, 0.95rem)",
-                      lineHeight: 1.85,
+                      lineHeight: "var(--translation-line-height, 1.85)",
                     }}
                   >
                     {ayah.translation}
