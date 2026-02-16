@@ -129,16 +129,126 @@ html {
   background: hsl(var(--muted-foreground) / 0.5);
 }
 
-/* Audio player highlight animation */
+/* Audio player highlight animation - clearer focus on active verse */
 .ayah-highlight {
   animation: ayah-glow 0.5s ease-out;
 }
 
 @keyframes ayah-glow {
   0% {
-    background-color: hsl(var(--primary) / 0.2);
+    background-color: hsl(var(--primary) / 0.25);
   }
   100% {
-    background-color: hsl(var(--primary) / 0.08);
+    background-color: hsl(var(--primary) / 0.16);
   }
+}
+
+/* Home page background animations */
+@keyframes gradient-shift {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(20px, -15px) scale(1.05);
+  }
+  66% {
+    transform: translate(-10px, 10px) scale(0.98);
+  }
+}
+
+@keyframes float-slower {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-25px, -20px);
+  }
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Subtle light wave / shimmer for background */
+@keyframes shimmer-wave {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  15% {
+    opacity: 0.03;
+  }
+  50% {
+    opacity: 0.06;
+  }
+  85% {
+    opacity: 0.03;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+}
+
+/* Hero background: stronger in Light Mode for clarity, subtle in Dark Mode */
+.hero-bg-gradient {
+  background: linear-gradient(to bottom, hsl(var(--primary) / 0.2), hsl(var(--primary) / 0.07), hsl(var(--background)));
+}
+.dark .hero-bg-gradient {
+  background: linear-gradient(to bottom, hsl(var(--primary) / 0.1), hsl(var(--primary) / 0.03), hsl(var(--background)));
+}
+
+.hero-orb-primary {
+  background: hsl(var(--primary) / 0.18);
+}
+.dark .hero-orb-primary {
+  background: hsl(var(--primary) / 0.1);
+}
+
+.hero-orb-accent {
+  background: hsl(var(--accent) / 0.15);
+}
+.dark .hero-orb-accent {
+  background: hsl(var(--accent) / 0.1);
+}
+
+.hero-orb-soft {
+  background: hsl(var(--primary) / 0.08);
+}
+.dark .hero-orb-soft {
+  background: hsl(var(--primary) / 0.05);
+}
+
+.hero-shimmer {
+  background: linear-gradient(to bottom, transparent 0%, hsl(var(--primary) / 0.07) 50%, transparent 100%);
+}
+.dark .hero-shimmer {
+  background: linear-gradient(to bottom, transparent 0%, hsl(var(--primary) / 0.05) 50%, transparent 100%);
+}
+
+/* Islamic geometric pattern - Girih: clearer in Light Mode, subtle in Dark */
+.bg-islamic-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%232a5c3f' stroke-opacity='0.11' stroke-width='0.4'%3E%3Cpath d='M40 26 L54 40 L40 54 L26 40 Z M46 34 L46 46 L34 46 L34 34 Z'/%3E%3Cpath d='M40 40 L80 40 M40 40 L80 80 M40 40 L40 80 M40 40 L0 80 M40 40 L0 40 M40 40 L0 0 M40 40 L40 0 M40 40 L80 0'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+}
+.dark .bg-islamic-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%2355a878' stroke-opacity='0.08' stroke-width='0.35'%3E%3Cpath d='M40 26 L54 40 L40 54 L26 40 Z M46 34 L46 46 L34 46 L34 34 Z'/%3E%3Cpath d='M40 40 L80 40 M40 40 L80 80 M40 40 L40 80 M40 40 L0 80 M40 40 L0 40 M40 40 L0 0 M40 40 L40 0 M40 40 L80 0'/%3E%3C/g%3E%3C/svg%3E");
 }

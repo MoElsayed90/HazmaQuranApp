@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AudioProvider } from "@/components/providers/AudioProvider";
 import { FontSizeSync } from "@/components/providers/FontSizeSync";
 import { Toaster } from "sonner";
+import { FaviconDebugLog } from "@/components/debug/FaviconDebugLog";
 
 export const metadata: Metadata = {
   title: {
@@ -11,9 +12,13 @@ export const metadata: Metadata = {
     template: "%s | حمزة",
   },
   description:
-    "استمع إلى القرآن الكريم بصوت أشهر القراء. تصفح السور، احفظ الإشارات المرجعية، واستمتع بتجربة قراءة واستماع مميزة.",
+    "استمع إلى القرآن الكريم بصوت أشهر القراء. تصفح القرآن الكريم، احفظ الإشارات المرجعية، واستمتع بتجربة قراءة واستماع مميزة.",
   keywords: ["قرآن", "quran", "إسلام", "تلاوة", "قراء"],
   manifest: "/manifest.json",
+  icons: {
+    icon: "/HamzaFavicon.png",
+    apple: "/App%20Logo.png",
+  },
   appleWebApp: {
     capable: true,
     title: "حمزة",
@@ -41,6 +46,7 @@ export default function RootLayout({
       <body className="min-h-screen antialiased">
         <ThemeProvider>
           <FontSizeSync />
+          <FaviconDebugLog />
           <AudioProvider>
             {children}
             <Toaster richColors position="top-center" />

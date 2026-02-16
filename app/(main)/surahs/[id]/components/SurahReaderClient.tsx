@@ -191,81 +191,89 @@ export function SurahReaderClient({
           {surah.englishName} - {surah.englishNameTranslation}
         </p>
         <div className="flex items-center justify-center gap-2 mt-2">
-          <Badge variant="outline">
+          <Badge
+            variant="outline"
+            className={
+              surah.revelationType === "Meccan"
+                ? "text-xs font-medium px-2 py-0.5 rounded-md border-accent text-accent-foreground bg-accent/15 dark:bg-accent/25 dark:text-accent dark:border-accent/70"
+                : "text-xs font-medium px-2 py-0.5 rounded-md border-primary text-primary bg-primary/15"
+            }
+          >
             {surah.revelationType === "Meccan" ? "مكية" : "مدنية"}
           </Badge>
           <Badge variant="outline">{surah.numberOfAyahs} آية</Badge>
         </div>
       </div>
 
-      {/* Reading settings bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card px-4 py-3 mb-6">
-        <div className="flex flex-wrap items-center gap-3 min-w-0">
-          {/* Font size */}
-          <div className="flex items-center gap-1.5">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => adjustFontSize("down")}
-              disabled={fontSize === "sm"}
-            >
-              <Minus className="h-3.5 w-3.5" />
-            </Button>
-            <span className="text-xs text-muted-foreground w-8 text-center">
-              {FONT_SIZES[fontSize].label}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => adjustFontSize("up")}
-              disabled={fontSize === "xl"}
-            >
-              <Plus className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-
-          <Separator orientation="vertical" className="h-5" />
-
-          {/* Translation toggle */}
-          <div className="flex items-center gap-2">
-            <BookOpenText className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">التفسير</span>
-            <Switch
-              checked={showTranslation}
-              onCheckedChange={setShowTranslation}
-              className="scale-75"
-            />
-          </div>
-
-          <Separator orientation="vertical" className="h-5 hidden sm:block" />
-
-          {/* تحويل بين الشيوخ — اختيار القارئ أثناء الاستماع */}
-          <div className="flex items-center gap-2 min-w-0 max-w-full">
-            <Mic2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-            <Select
-              value={audioEditionIds.includes(audioEdition as AudioEditionId) ? audioEdition : "alafasy"}
-              onValueChange={(v) => setAudioEdition(v)}
-            >
-              <SelectTrigger className="w-full min-w-0 max-w-[11rem] sm:max-w-[13rem] h-8 text-xs border-muted" dir="rtl">
-                <SelectValue placeholder="القارئ" />
-              </SelectTrigger>
-              <SelectContent>
-                {audioEditionIds.map((id) => (
-                  <SelectItem key={id} value={id} className="text-right">
-                    {AUDIO_EDITIONS[id].name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      {/* Reading settings bar — balanced layout (play with controls, not isolated) */}
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-card px-4 py-3 mb-6">
+        {/* Font size */}
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => adjustFontSize("down")}
+            disabled={fontSize === "sm"}
+          >
+            <Minus className="h-3.5 w-3.5" />
+          </Button>
+          <span className="text-xs text-muted-foreground w-8 text-center">
+            {FONT_SIZES[fontSize].label}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => adjustFontSize("up")}
+            disabled={fontSize === "xl"}
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </Button>
         </div>
 
+        <Separator orientation="vertical" className="h-5" />
+
+        {/* Translation toggle */}
+        <div className="flex items-center gap-2">
+          <BookOpenText className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">التفسير</span>
+          <Switch
+            checked={showTranslation}
+            onCheckedChange={setShowTranslation}
+            className="scale-75"
+          />
+        </div>
+
+        <Separator orientation="vertical" className="h-5 hidden sm:block" />
+
+        {/* Reciter */}
+        <div className="flex items-center gap-2 min-w-0 max-w-full">
+          <Mic2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+          <Select
+            value={audioEditionIds.includes(audioEdition as AudioEditionId) ? audioEdition : "alafasy"}
+            onValueChange={(v) => setAudioEdition(v)}
+          >
+            <SelectTrigger className="w-full min-w-0 max-w-[11rem] sm:max-w-[13rem] h-8 text-xs border-muted" dir="rtl">
+              <SelectValue placeholder="القارئ" />
+            </SelectTrigger>
+            <SelectContent>
+              {audioEditionIds.map((id) => (
+                <SelectItem key={id} value={id} className="text-right">
+                  {AUDIO_EDITIONS[id].name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Separator orientation="vertical" className="h-5 hidden sm:block" />
+
+        {/* Play — inline with bar, not stuck on one side */}
         <Button
-          variant="outline"
+          variant="default"
           size="sm"
-          className="gap-2"
+          className="gap-2 shrink-0"
           onClick={handlePlayAll}
         >
           <Play className="h-3.5 w-3.5" />

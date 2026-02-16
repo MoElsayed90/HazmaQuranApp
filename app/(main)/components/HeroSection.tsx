@@ -73,71 +73,87 @@ export function HeroSection({ surahs = [], reciters = [] }: HeroSectionProps) {
     setShowSuggestions(false);
   };
 
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: 0.08, delayChildren: 0.2 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-primary/8 via-primary/[0.03] to-transparent">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-[28rem] h-[28rem] rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-[28rem] h-[28rem] rounded-full bg-accent/10 blur-3xl" />
-      </div>
-
-      <div className="container mx-auto px-4 py-24 md:py-32 relative">
+    <section className="relative overflow-hidden min-h-0">
+      <div className="container mx-auto px-4 pt-14 pb-20 md:pt-20 md:pb-28 relative">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center space-y-10"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="max-w-3xl mx-auto text-center"
         >
-          <p className="text-xl md:text-3xl text-muted-foreground font-quran leading-relaxed">
-            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-          </p>
-          <p className="text-lg md:text-2xl text-primary/90 font-quran">
-            وَاذْكُرِ اسْمَ رَبِّكَ وَتَبَتَّلْ إِلَيْهِ تَبْتِيلًا
-          </p>
+          {/* Opening: Bismillah + verse — grouped, tight spacing */}
+          <motion.div variants={itemVariants} transition={{ duration: 0.5 }} className="space-y-2 mb-6 md:mb-8">
+            <p className="text-xl md:text-2xl text-muted-foreground font-quran leading-relaxed">
+              بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+            </p>
+            <p className="text-base md:text-xl text-primary/90 font-quran">
+              وَاذْكُرِ اسْمَ رَبِّكَ وَتَبَتَّلْ إِلَيْهِ تَبْتِيلًا
+            </p>
+          </motion.div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-            استمع إلى{" "}
-            <span className="text-primary">القرآن الكريم</span>
-          </h1>
+          {/* Headline + beta badge — clear primary focus */}
+          <motion.div variants={itemVariants} transition={{ duration: 0.5 }} className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2 sm:gap-3 mb-4">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
+              استمع إلى{" "}
+              <span className="text-primary">القرآن الكريم</span>
+            </h1>
+            <span className="text-[10px] md:text-xs font-medium text-muted-foreground/90 px-2.5 py-0.5 rounded-full bg-muted/60 border border-border/40 inline-block w-fit mx-auto sm:mx-0">
+              نسخة تجريبية
+            </span>
+          </motion.div>
 
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-muted/80 text-muted-foreground border border-border/50">
-            نسخة تجريبية
-          </span>
+          {/* Short description — one block, less space */}
+          <motion.p
+            variants={itemVariants}
+            transition={{ duration: 0.5 }}
+            className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto leading-relaxed mb-6"
+          >
+           تصفح القرآن الكريم واستمع لأشهر القراء. المصحف المعلم للحفظ، والمحفوظات للعودة لآياتك.
+          </motion.p>
 
-          <p className="text-muted-foreground text-lg md:text-xl max-w-lg mx-auto leading-relaxed">
-            تصفح السور واستمع لأشهر القراء. المصحف المعلم للحفظ، وتجربة هادئة على جميع الأجهزة.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+          {/* CTAs — primary one clear, secondary outline */}
+          <motion.div
+            variants={itemVariants}
+            transition={{ duration: 0.4 }}
+            className="flex flex-wrap items-center justify-center gap-3 mb-6"
+          >
             <Link href="/surahs">
-              <Button size="lg" className="gap-2 rounded-full min-h-[3.25rem] px-8 text-lg">
+              <Button size="lg" className="gap-2 rounded-full min-h-[3.25rem] px-6 md:px-8 text-base md:text-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm">
                 <BookOpen className="h-5 w-5" />
-                تصفح السور
+                تصفح القرآن الكريم
               </Button>
             </Link>
             <Link href="/teacher-mushaf">
-              <Button
-                variant="default"
-                size="lg"
-                className="gap-2 rounded-full min-h-[3.25rem] px-8 text-lg bg-primary/90 hover:bg-primary"
-              >
+              <Button variant="outline" size="lg" className="gap-2 rounded-full min-h-[3.25rem] px-6 md:px-8 text-base md:text-lg border-primary/30 text-foreground hover:bg-primary/10 hover:border-primary/50">
                 <GraduationCap className="h-5 w-5" />
                 المصحف المعلم
               </Button>
             </Link>
             <Link href="/reciters">
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 rounded-full min-h-[3.25rem] px-8 text-lg"
-              >
+              <Button variant="outline" size="lg" className="gap-2 rounded-full min-h-[3.25rem] px-6 md:px-8 text-base md:text-lg border-primary/30 text-foreground hover:bg-primary/10 hover:border-primary/50">
                 <Headphones className="h-5 w-5" />
                 القراء
               </Button>
             </Link>
-          </div>
+          </motion.div>
 
+          {/* Search — closer to CTAs, subtle shadow */}
+          <motion.div variants={itemVariants} transition={{ duration: 0.4 }} className="w-full max-w-md mx-auto mt-6">
           <Popover open={showDropdown} onOpenChange={setShowSuggestions}>
-            <div className="mt-10 w-full max-w-md mx-auto">
+            <div>
               <form onSubmit={handleSearchSubmit}>
                 <PopoverTrigger asChild>
                   <div
@@ -145,7 +161,7 @@ export function HeroSection({ surahs = [], reciters = [] }: HeroSectionProps) {
                     aria-expanded={showDropdown}
                     aria-controls="hero-search-listbox"
                     aria-haspopup="listbox"
-                    className="relative flex items-center rounded-full border bg-card/80 overflow-visible focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2 hover:border-primary/30 transition-colors cursor-text"
+                    className="relative flex items-center rounded-full border border-border/80 bg-card/80 shadow-sm overflow-visible focus-within:border-primary/50 focus-within:ring-0 hover:border-primary/30 transition-colors cursor-text"
                   >
                     <Search className="h-5 w-5 text-muted-foreground absolute right-4 pointer-events-none" />
                     <Input
@@ -155,7 +171,7 @@ export function HeroSection({ surahs = [], reciters = [] }: HeroSectionProps) {
                       onChange={(e) => setQuery(e.target.value)}
                       onFocus={() => setShowSuggestions(true)}
                       placeholder="ابحث عن سورة أو قارئ..."
-                      className="border-0 bg-transparent pr-12 pl-4 h-12 text-sm sm:text-base placeholder:text-muted-foreground focus-visible:ring-0"
+                      className="border-0 bg-transparent pr-12 pl-4 h-12 text-sm sm:text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 outline-none"
                       dir="rtl"
                       aria-label="ابحث عن سورة أو قارئ"
                       autoComplete="off"
@@ -174,7 +190,7 @@ export function HeroSection({ surahs = [], reciters = [] }: HeroSectionProps) {
                   <div className="p-2 space-y-2" role="listbox">
                     {filteredSurahs.slice(0, MAX_SUGGESTIONS).length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-muted-foreground px-2 py-1">السور</p>
+                        <p className="text-xs font-semibold text-muted-foreground px-2 py-1">سور القرآن</p>
                         {filteredSurahs.slice(0, MAX_SUGGESTIONS).map((s) => (
                           <Link
                             key={s.id}
@@ -220,6 +236,7 @@ export function HeroSection({ surahs = [], reciters = [] }: HeroSectionProps) {
               </PopoverContent>
             </div>
           </Popover>
+          </motion.div>
         </motion.div>
       </div>
     </section>

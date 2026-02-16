@@ -30,7 +30,7 @@ export function AyahRow({
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarkStore();
   const showTranslation = useSettingsStore((s) => s.showTranslation);
   const bookmarked = isBookmarked(surahId, ayah.number);
-  const { play, isTrackPlaying } = useAudioPlayerContext();
+  const { play, toggle, currentTrack, isTrackPlaying } = useAudioPlayerContext();
   const trackId = `${surahId}-${ayah.number}`;
   const playing = isTrackPlaying(trackId);
 
@@ -76,16 +76,19 @@ export function AyahRow({
   };
 
   const handlePlay = () => {
-    if (audioUrl) {
-      play({
-        id: trackId,
-        url: audioUrl,
-        title: `الآية ${ayah.number}`,
-        subtitle: surahName,
-        surahId,
-        ayahNumber: ayah.number,
-      });
+    if (!audioUrl) return;
+    if (currentTrack?.id === trackId) {
+      toggle();
+      return;
     }
+    play({
+      id: trackId,
+      url: audioUrl,
+      title: `الآية ${ayah.number}`,
+      subtitle: surahName,
+      surahId,
+      ayahNumber: ayah.number,
+    });
   };
 
   return (
@@ -94,8 +97,8 @@ export function AyahRow({
         <div
           id={`ayah-${ayah.number}`}
           className={cn(
-            "group relative py-4 px-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-muted/50",
-            isHighlighted && "bg-primary/[0.06] ayah-highlight"
+            "group relative py-5 px-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-primary/10",
+            isHighlighted && "bg-primary/[0.16] ayah-highlight"
           )}
         >
           <div className="flex gap-3 items-start">
@@ -125,18 +128,23 @@ export function AyahRow({
               )}
             </div>
 
-            {/* Ayah text */}
-            <div className="flex-1 min-w-0">
+            {/* Ayah text + translation (clear separation to avoid overlap) */}
+            <div className="flex-1 min-w-0 space-y-4">
               <p className="quran-text leading-loose">
                 {ayah.text}
               </p>
               {showTranslation && ayah.translation && (
-                <p
-                  className="text-muted-foreground mt-3 leading-relaxed"
-                  style={{ fontSize: "var(--translation-font-size, 0.95rem)" }}
-                >
-                  {ayah.translation}
-                </p>
+                <div className="rounded-md bg-muted/40 border-r-2 border-primary/20 py-3 px-3.5 text-right">
+                  <p
+                    className="text-muted-foreground leading-loose"
+                    style={{
+                      fontSize: "var(--translation-font-size, 0.95rem)",
+                      lineHeight: 1.85,
+                    }}
+                  >
+                    {ayah.translation}
+                  </p>
+                </div>
               )}
             </div>
 

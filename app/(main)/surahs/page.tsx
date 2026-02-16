@@ -3,7 +3,7 @@ import { SurahListClient } from "./components/SurahListClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "السور",
+  title: "القرآن الكريم",
   description: "تصفح جميع سور القرآن الكريم الـ 114",
 };
 

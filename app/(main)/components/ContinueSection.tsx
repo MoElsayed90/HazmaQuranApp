@@ -13,7 +13,13 @@ export function ContinueSection() {
   const hasContinue = lastRead || lastAudio;
 
   return (
-    <section className="space-y-5">
+    <motion.section
+      className="space-y-5"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.45 }}
+    >
       <h2 className="text-xl md:text-2xl font-bold text-foreground">
         {hasContinue ? "أكمل من حيث توقفت" : "وصول سريع"}
       </h2>
@@ -76,7 +82,7 @@ export function ContinueSection() {
         <Link href="/surahs">
           <Button variant="secondary" size="sm" className="rounded-full gap-2 min-h-[2.75rem]">
             <BookOpen className="h-4 w-4" />
-            السور
+            القرآن الكريم
           </Button>
         </Link>
         <Link href="/bookmarks">
@@ -100,6 +106,6 @@ export function ContinueSection() {
           </Link>
         )}
       </div>
-    </section>
+    </motion.section>
   );
 }

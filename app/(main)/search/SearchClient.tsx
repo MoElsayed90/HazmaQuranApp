@@ -99,7 +99,7 @@ export function SearchClient({
         <div className="space-y-10">
           {filteredSurahs.length > 0 && (
             <section>
-              <h2 className="text-xl font-bold text-foreground mb-4">السور</h2>
+              <h2 className="text-xl font-bold text-foreground mb-4">سور القرآن</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredSurahs.map((surah, i) => (
                   <SurahCard key={surah.id} surah={surah} index={i} />

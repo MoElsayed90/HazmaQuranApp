@@ -34,7 +34,7 @@ export default function Navbar() {
   const { canInstall, install, isInstalled } = usePWAInstall();
   useEffect(() => setMounted(true), []);
 
-  const logoSrc = mounted && resolvedTheme === "dark" ? "/logo_Dark.png" : "/light_logo.png";
+  const logoSrc = mounted && resolvedTheme === "dark" ? "/logo_Dark (1).png" : "/light_logo.png";
 
   const handleInstallClick = async () => {
     await install();
@@ -43,15 +43,15 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex md:h-24 h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex md:h-16 h-16 items-center justify-between px-4">
         {/* Logo only — no duplicate text; size fits navbar */}
         <Link href="/" className="flex items-center shrink-0">
           <Image
             src={logoSrc}
             alt="حمزة"
             width={200}
-            height={20}
-            className="h-12 w-auto object-contain md:h-20"
+            height={90}
+            className="h-7 w-auto object-contain md:h-10"
             priority
           />
         </Link>
@@ -67,7 +67,7 @@ export default function Navbar() {
                   variant={isActive ? "default" : "ghost"}
                   size="sm"
                   className={cn(
-                    "gap-1.5 text-sm",
+                    "gap-1.5 text-base font-medium",
                     isActive && "bg-primary text-primary-foreground"
                   )}
                 >
@@ -121,18 +121,18 @@ export default function Navbar() {
                         variant={isActive ? "default" : "ghost"}
                         size="sm"
                         className={cn(
-                          "w-full justify-start gap-2 text-sm",
+                          "w-full justify-start gap-2 text-base font-medium",
                           isActive && "bg-primary text-primary-foreground"
                         )}
                       >
-                        {Icon && <Icon className="h-4 w-4" />}
+                        {Icon && <Icon className="h-3.5 w-3.5" />}
                         {link.label}
                       </Button>
                     </Link>
                   );
                 })}
                 <Link href="/settings" onClick={() => setOpen(false)}>
-                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-sm">
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-base font-medium">
                     <Settings className="h-4 w-4" />
                     الإعدادات
                   </Button>
@@ -141,7 +141,7 @@ export default function Navbar() {
                   <Button
                     variant="default"
                     size="sm"
-                    className="w-full justify-start gap-2 text-sm mt-2 bg-primary"
+                    className="w-full justify-start gap-2 text-base font-medium mt-2 bg-primary"
                     onClick={handleInstallClick}
                   >
                     <Download className="h-4 w-4" />

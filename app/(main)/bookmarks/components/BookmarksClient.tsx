@@ -41,7 +41,7 @@ export function BookmarksClient() {
           icon={<Bookmark className="h-8 w-8 text-muted-foreground" />}
           title="لا توجد إشارات مرجعية"
           message="اضغط على أي آية لإضافتها إلى المحفوظات"
-          actionLabel="تصفح السور"
+          actionLabel="تصفح القرآن الكريم"
           actionHref="/surahs"
         />
       </div>

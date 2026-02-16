@@ -157,7 +157,7 @@ export function SettingsClient() {
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <p className="text-sm">قارئ الصوت أثناء قراءة السور</p>
+            <p className="text-sm">قارئ الصوت أثناء قراءة القرآن</p>
             <p className="text-xs text-muted-foreground">
               يشمل خيار المصحف المعلم للشيخ محمود خليل الحصري
             </p>

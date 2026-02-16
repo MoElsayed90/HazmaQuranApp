@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "المصحف المعلم | حمزة",
-  description: "المصحف المعلم للشيخ محمود خليل الحصري — صوت السور للتعليم والتحفيظ",
+  description: "المصحف المعلم للشيخ محمود خليل الحصري — صوت سور القرآن للتعليم والتحفيظ",
 };
 
 export default function TeacherMushafPage() {

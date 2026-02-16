@@ -76,6 +76,39 @@ const config: Config = {
         "quran-lg": ["1.75rem", { lineHeight: "2.2" }],
         "quran-xl": ["2rem", { lineHeight: "2.2" }],
       },
+      animation: {
+        "gradient-shift": "gradient-shift 8s ease-in-out infinite",
+        "float-slow": "float-slow 12s ease-in-out infinite",
+        "float-slower": "float-slower 15s ease-in-out infinite",
+        "pulse-slow": "pulse-slow 6s ease-in-out infinite",
+        "shimmer-wave": "shimmer-wave 18s ease-in-out infinite",
+      },
+      keyframes: {
+        "gradient-shift": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.85" },
+        },
+        "float-slow": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "33%": { transform: "translate(20px, -15px) scale(1.05)" },
+          "66%": { transform: "translate(-10px, 10px) scale(0.98)" },
+        },
+        "float-slower": {
+          "0%, 100%": { transform: "translate(0, 0)" },
+          "50%": { transform: "translate(-25px, -20px)" },
+        },
+        "pulse-slow": {
+          "0%, 100%": { opacity: "0.4" },
+          "50%": { opacity: "0.7" },
+        },
+        "shimmer-wave": {
+          "0%": { opacity: "0", transform: "translateY(-100%)" },
+          "15%": { opacity: "0.03" },
+          "50%": { opacity: "0.06" },
+          "85%": { opacity: "0.03" },
+          "100%": { opacity: "0", transform: "translateY(100vh)" },
+        },
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

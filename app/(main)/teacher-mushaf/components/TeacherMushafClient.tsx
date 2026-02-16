@@ -94,7 +94,7 @@ export function TeacherMushafClient() {
       <Card className="overflow-hidden">
         <CardHeader className="sticky top-0 z-10 border-b bg-card pb-3 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <CardTitle className="text-base">صوت السور — 114 مقطع</CardTitle>
+            <CardTitle className="text-base">صوت سور القرآن — 114 مقطع</CardTitle>
             <Button
               variant="default"
               size="sm"

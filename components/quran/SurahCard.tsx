@@ -46,10 +46,10 @@ export function SurahCard({ surah, index = 0 }: SurahCardProps) {
               <Badge
                 variant="outline"
                 className={cn(
-                  "text-[10px] px-1.5 py-0",
+                  "text-xs font-medium px-2 py-0.5 rounded-md",
                   surah.revelationType === "Meccan"
-                    ? "border-accent text-accent-foreground"
-                    : "border-primary text-primary"
+                    ? "border-accent text-accent-foreground bg-accent/15 dark:bg-accent/25 dark:text-accent dark:border-accent/70"
+                    : "border-primary text-primary bg-primary/15"
                 )}
               >
                 {surah.revelationType === "Meccan" ? "مكية" : "مدنية"}

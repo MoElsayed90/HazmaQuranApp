@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReciterCard } from "@/components/quran/ReciterCard";
+import { motion } from "framer-motion";
 import type { Reciter } from "@/lib/api/types";
 
 interface FeaturedRecitersProps {
@@ -14,7 +15,12 @@ export function FeaturedReciters({ reciters }: FeaturedRecitersProps) {
   if (reciters.length === 0) return null;
 
   return (
-    <section>
+    <motion.section
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl md:text-2xl font-bold text-foreground">أشهر القراء</h2>
         <Link href="/reciters">
@@ -29,6 +35,6 @@ export function FeaturedReciters({ reciters }: FeaturedRecitersProps) {
           <ReciterCard key={reciter.id} reciter={reciter} index={i} />
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 }

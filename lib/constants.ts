@@ -72,7 +72,7 @@ export function getSurahAyahRange(surahId: number): [number, number] {
 // Navigation links
 export const NAV_LINKS = [
   { href: "/", label: "الرئيسية", icon: "Home" },
-  { href: "/surahs", label: "السور", icon: "BookOpen" },
+  { href: "/surahs", label: "القرآن الكريم", icon: "BookOpen" },
   { href: "/reciters", label: "القراء", icon: "Mic2" },
   { href: "/bookmarks", label: "المحفوظات", icon: "Bookmark" },
 ] as const;

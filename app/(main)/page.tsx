@@ -23,7 +23,7 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="space-y-0">
+    <div className="relative min-h-screen space-y-0">
       <HeroSection surahs={surahs} reciters={reciters} />
       <AboutSection />
       <div className="container mx-auto px-4 space-y-14 py-14">

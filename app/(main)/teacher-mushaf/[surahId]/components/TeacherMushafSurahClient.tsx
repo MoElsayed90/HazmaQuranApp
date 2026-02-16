@@ -26,11 +26,15 @@ function MuelamAyahRow({
   audioUrl: string;
   isHighlighted: boolean;
 }) {
-  const { play, isTrackPlaying } = useAudioPlayerContext();
+  const { play, toggle, currentTrack, isTrackPlaying } = useAudioPlayerContext();
   const trackId = `muelam-${surahId}-${ayah.numberInQuran}`;
   const playing = isTrackPlaying(trackId);
 
   const handlePlay = () => {
+    if (currentTrack?.id === trackId) {
+      toggle();
+      return;
+    }
     play({
       id: trackId,
       url: audioUrl,
@@ -45,8 +49,8 @@ function MuelamAyahRow({
     <div
       id={`ayah-${ayah.number}`}
       className={cn(
-        "group relative py-4 px-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-muted/50",
-        isHighlighted && "bg-primary/[0.08] ayah-highlight"
+        "group relative py-4 px-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-primary/10",
+        isHighlighted && "bg-primary/[0.16] ayah-highlight"
       )}
     >
       <div className="flex gap-3 items-start">
@@ -147,7 +151,14 @@ export function TeacherMushafSurahClient({
             {surah.englishName} — {surah.englishNameTranslation}
           </p>
           <div className="flex items-center gap-2 mt-2">
-            <Badge variant="outline">
+            <Badge
+              variant="outline"
+              className={
+                surah.revelationType === "Meccan"
+                  ? "text-xs font-medium px-2 py-0.5 rounded-md border-accent text-accent-foreground bg-accent/15 dark:bg-accent/25 dark:text-accent dark:border-accent/70"
+                  : "text-xs font-medium px-2 py-0.5 rounded-md border-primary text-primary bg-primary/15"
+              }
+            >
               {surah.revelationType === "Meccan" ? "مكية" : "مدنية"}
             </Badge>
             <Badge variant="outline">{surah.numberOfAyahs} آية</Badge>

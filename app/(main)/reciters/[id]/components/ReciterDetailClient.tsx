@@ -32,7 +32,7 @@ export function ReciterDetailClient({
     recitationsWithClips[0]?.id ?? null
   );
   const showImage = Boolean(reciterImage && !imageError);
-  const { play, isTrackPlaying, currentTrack, progress, playQueue } =
+  const { play, toggle, isTrackPlaying, currentTrack, progress, playQueue } =
     useAudioPlayerContext();
 
   const selectedRecitation =
@@ -51,6 +51,10 @@ export function ReciterDetailClient({
     attachment: { id: number; title: string; url: string },
     recitationTitle: string
   ) => {
+    if (currentTrack?.id === attachment.id) {
+      toggle();
+      return;
+    }
     play({
       id: attachment.id,
       url: attachment.url,
