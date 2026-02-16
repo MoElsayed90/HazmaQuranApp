@@ -1,5 +1,5 @@
 import { getQuranProvider } from "@/lib/api/providers/islamhouse";
-import { TeacherMushafSurahClient } from "./components/TeacherMushafSurahClient";
+import { TeacherMushafPageClient } from "./TeacherMushafPageClient";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -7,7 +7,9 @@ interface PageProps {
   params: Promise<{ surahId: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { surahId } = await params;
   const provider = getQuranProvider();
   try {
@@ -29,17 +31,5 @@ export default async function TeacherMushafSurahPage({ params }: PageProps) {
     notFound();
   }
 
-  const provider = getQuranProvider();
-
-  try {
-    const { surah, ayahs } = await provider.getSurah(id);
-    return (
-      <TeacherMushafSurahClient
-        surah={surah}
-        ayahs={ayahs}
-      />
-    );
-  } catch {
-    notFound();
-  }
+  return <TeacherMushafPageClient />;
 }

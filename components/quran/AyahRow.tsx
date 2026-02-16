@@ -1,11 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Share2, BookmarkPlus, BookmarkCheck, Play, Pause } from "lucide-react";
+import { Copy, Share2, BookmarkPlus, BookmarkCheck, Play, Pause, Mic2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useBookmarkStore } from "@/lib/stores/use-bookmarks";
 import { useSettingsStore } from "@/lib/stores/use-settings";
+import { AUDIO_EDITIONS, type AudioEditionId } from "@/lib/audio/service";
 import { useAudioPlayerContext } from "@/hooks/use-audio-player";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -31,8 +39,9 @@ export function AyahRow({
 }: AyahRowProps) {
   const [actionsOpen, setActionsOpen] = useState(false);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarkStore();
-  const showTranslation = useSettingsStore((s) => s.showTranslation);
+  const { showTranslation, audioEdition, setAudioEdition } = useSettingsStore();
   const bookmarked = isBookmarked(surahId, ayah.number);
+  const audioEditionIds = Object.keys(AUDIO_EDITIONS) as AudioEditionId[];
   const { play, toggle, currentTrack, isTrackPlaying } = useAudioPlayerContext();
   const trackId = `${surahId}-${ayah.number}`;
   const playing = isTrackPlaying(trackId);
@@ -191,6 +200,29 @@ export function AyahRow({
               <BookmarkPlus className="h-4 w-4" />
             )}
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="تغيير القارئ">
+                <Mic2 className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-[12rem]">
+              <DropdownMenuLabel className="text-right">قائمة القراء</DropdownMenuLabel>
+              {audioEditionIds.map((id) => (
+                <DropdownMenuItem
+                  key={id}
+                  className="text-right cursor-pointer"
+                  onClick={() => {
+                    setAudioEdition(id);
+                    setActionsOpen(false);
+                  }}
+                >
+                  {AUDIO_EDITIONS[id].name}
+                  {audioEdition === id ? " ✓" : ""}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           {audioUrl && (
             <Button
               variant="ghost"

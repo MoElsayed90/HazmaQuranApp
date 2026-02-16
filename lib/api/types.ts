@@ -32,6 +32,8 @@ export interface Reciter {
   imageUrl?: string;
   recitationCount?: number;
   recitationIds?: number[];
+  /** تاريخ الإضافة (لترتيب «الأحدث») */
+  addDate?: number;
 }
 
 export interface Recitation {

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 import { AudioProvider } from "@/components/providers/AudioProvider";
 import { FontSizeSync } from "@/components/providers/FontSizeSync";
 import { Toaster } from "sonner";
@@ -45,12 +46,14 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
         <ThemeProvider>
-          <FontSizeSync />
-          <FaviconDebugLog />
-          <AudioProvider>
+          <QueryProvider>
+            <FontSizeSync />
+            <FaviconDebugLog />
+            <AudioProvider>
             {children}
-            <Toaster richColors position="top-center" />
-          </AudioProvider>
+              <Toaster richColors position="top-center" />
+            </AudioProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -15,7 +15,6 @@ export const AUDIO_EDITIONS = {
   /** المصحف المعلم — محمود خليل الحصري (نفس slug للآيات) */
   husaryMuelam: { slug: "ar.husary", name: "محمود خليل الحصري (المصحف المعلم)" },
   minshawi: { slug: "ar.minshawi", name: "محمد صديق المنشاوي" },
-  abdulbaset: { slug: "ar.abdulbasitmurattal", name: "عبد الباسط عبد الصمد" },
 } as const;
 
 export type AudioEditionId = keyof typeof AUDIO_EDITIONS;

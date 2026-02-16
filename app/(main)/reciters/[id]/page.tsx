@@ -1,5 +1,5 @@
 import { getQuranProvider } from "@/lib/api/providers/islamhouse";
-import { ReciterDetailClient } from "./components/ReciterDetailClient";
+import { ReciterDetailPageClient } from "./ReciterDetailPageClient";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -7,9 +7,11 @@ interface PageProps {
   searchParams: Promise<{ recitations?: string }>;
 }
 
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
   const { recitations } = await searchParams;
-  const recitationIds = recitations?.split(",").map(Number).filter(Boolean) || [];
+  const recitationIds = recitations?.split(",").map(Number).filter(Boolean) ?? [];
   if (recitationIds.length > 0) {
     const provider = getQuranProvider();
     try {
@@ -22,40 +24,6 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return { title: "تفاصيل القارئ" };
 }
 
-export default async function ReciterDetailPage({
-  params,
-  searchParams,
-}: PageProps) {
-  const { id } = await params;
-  const { recitations } = await searchParams;
-  const reciterId = Number(id);
-  const recitationIds =
-    recitations?.split(",").map(Number).filter(Boolean) || [];
-
-  const provider = getQuranProvider();
-
-  // Fetch all recitations in parallel
-  const recitationResults = await Promise.all(
-    recitationIds.map((rId) =>
-      provider.getRecitation(rId).catch(() => null)
-    )
-  );
-
-  const validRecitations = recitationResults.filter(Boolean) as Awaited<
-    ReturnType<typeof provider.getRecitation>
-  >[];
-
-  // Try to get reciter info from the reciters list
-  const reciters = await provider.getReciters().catch(() => []);
-  const reciter = reciters.find((r) => r.id === reciterId);
-
-  return (
-    <div className="container mx-auto px-4 py-6">
-      <ReciterDetailClient
-        reciterName={reciter?.name || "قارئ"}
-        reciterImage={reciter?.imageUrl}
-        recitations={validRecitations}
-      />
-    </div>
-  );
+export default function ReciterDetailPage() {
+  return <ReciterDetailPageClient />;
 }

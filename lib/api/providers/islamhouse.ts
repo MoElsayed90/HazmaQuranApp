@@ -50,6 +50,7 @@ function mapAuthorToReciter(author: IslamHouseAuthor): Reciter {
     recitationIds: author.recitations_info?.recitations_ids
       ? [...new Set(author.recitations_info.recitations_ids)]
       : [],
+    addDate: author.add_date,
   };
 }
 

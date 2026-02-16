@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchInput } from "@/components/quran/SearchInput";
 import { useAudioPlayerContext } from "@/hooks/use-audio-player";
 import type { Recitation } from "@/lib/api/types";
@@ -128,8 +127,8 @@ export function ReciterDetailClient({
           لا توجد تلاوات متاحة
         </div>
       ) : (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-foreground">القراءات المتاحة</h2>
+        <div className="space-y-4 min-w-0">
+          <h2 className="text-lg font-semibold text-foreground break-words min-w-0">القراءات المتاحة</h2>
           {/* تلاوات جنب بعض — الضغط يفتح السور بداخلها */}
           <div className="flex flex-wrap gap-3">
             {recitationsWithClips.map((recitation) => (
@@ -137,11 +136,11 @@ export function ReciterDetailClient({
                 key={recitation.id}
                 variant={selectedRecitationId === recitation.id ? "default" : "outline"}
                 size="default"
-                className="shrink-0  min-w-0 h-auto py-2.5 px-4 text-sm"
+                className="min-w-0 h-auto py-2.5 px-4 text-sm whitespace-normal text-right"
                 onClick={() => setSelectedRecitationId(recitation.id)}
                 title={recitation.title}
               >
-                <span className=" block text-right w-full min-w-0 text-sm font-bold">
+                <span className="block text-right w-full min-w-0 text-sm font-bold break-words whitespace-normal">
                   {recitation.title}
                 </span>
                 <span
@@ -188,11 +187,10 @@ export function ReciterDetailClient({
                 </p>
               </CardHeader>
               <CardContent className="p-0">
-                <ScrollArea className="h-[min(70vh,32rem)] w-full">
-                  <div
-                    dir="rtl"
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 p-2"
-                  >
+                <div
+                  dir="rtl"
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 p-2 sm:p-3"
+                >
                     {filteredAttachments.length === 0 ? (
                       <div className="col-span-full text-center py-8 text-muted-foreground text-sm">
                         {searchSurah.trim() ? "لا توجد سورة تطابق البحث" : "لا توجد مقاطع"}
@@ -283,7 +281,6 @@ export function ReciterDetailClient({
                       })
                     )}
                   </div>
-                </ScrollArea>
               </CardContent>
             </Card>
           )}

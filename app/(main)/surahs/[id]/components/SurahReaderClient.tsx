@@ -38,7 +38,7 @@ export function SurahReaderClient({
   ayahs,
   initialAyah,
 }: SurahReaderClientProps) {
-  const { currentTrack, isPlaying, playQueue, currentTime, duration } = useAudioPlayerContext();
+  const { currentTrack, isPlaying, playQueue, currentTime, duration, queueIndex } = useAudioPlayerContext();
   const setLastRead = useAudioStateStore((s) => s.setLastRead);
   const { fontSize, setFontSize, showTranslation, setShowTranslation, audioEdition, setAudioEdition } =
     useSettingsStore();
@@ -114,6 +114,28 @@ export function SurahReaderClient({
   }, [currentAyahNumber, isPlaying]);
 
   const editionName = getEditionName(audioEdition);
+
+  // عند تغيير القارئ: إن كان التشغيل الحالي من هذه السورة، نحدّث القائمة ونستأنف من الآية الحالية
+  const prevEditionRef = useRef(audioEdition);
+  useEffect(() => {
+    if (prevEditionRef.current === audioEdition) return;
+    prevEditionRef.current = audioEdition;
+    const isPlayingThisSurah = currentTrack?.surahId === surah.id;
+    if (!isPlayingThisSurah || ayahs.length === 0) return;
+    const newEditionName = getEditionName(audioEdition);
+    const newTracks = ayahs.map((a) => ({
+      id: `${surah.id}-${a.number}`,
+      url: getAyahAudioUrl(a.numberInQuran, audioEdition),
+      title: `الآية ${a.number}`,
+      subtitle: `${surah.name} - ${newEditionName}`,
+      surahId: surah.id,
+      ayahNumber: a.number,
+      surahName: surah.name,
+      reciterName: newEditionName,
+    }));
+    const startIndex = Math.max(0, Math.min(queueIndex, newTracks.length - 1));
+    playQueue(newTracks, startIndex);
+  }, [audioEdition, currentTrack?.surahId, surah.id, surah.name, ayahs, queueIndex, playQueue]);
 
   const handlePlayAll = () => {
     const tracks = ayahs.map((a) => ({
@@ -216,9 +238,10 @@ export function SurahReaderClient({
 
         <Separator orientation="vertical" className="h-5 hidden sm:block" />
 
-        {/* Reciter */}
+        {/* Reciter — قائمة القراء */}
         <div className="flex items-center gap-2 min-w-0 max-w-full">
           <Mic2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+          <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 hidden sm:inline">قائمة القراء</span>
           <Select
             value={audioEditionIds.includes(audioEdition as AudioEditionId) ? audioEdition : "alafasy"}
             onValueChange={(v) => setAudioEdition(v)}

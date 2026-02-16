@@ -1,10 +1,8 @@
-import { SurahListSkeleton } from "@/components/shared/LoadingSkeleton";
+import { SurahListSkeleton } from "./components/SurahListSkeleton";
 
-export default function Loading() {
+export default function SurahsLoading() {
   return (
-    <div className="container mx-auto px-4 py-6 space-y-4">
-      <div className="h-8 w-48 bg-muted rounded animate-pulse" />
-      <div className="h-10 w-full max-w-md bg-muted rounded animate-pulse" />
+    <div className="container mx-auto px-4 py-6">
       <SurahListSkeleton />
     </div>
   );

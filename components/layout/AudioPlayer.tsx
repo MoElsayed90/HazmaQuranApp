@@ -105,17 +105,16 @@ export function AudioPlayerMini() {
 
         {/* Center: playback controls */}
         <div className="flex items-center gap-1 shrink-0 px-2">
-          {queue.length > 1 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={previous}
-              disabled={queueIndex <= 0}
-            >
-              <SkipForward className="h-4 w-4" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={previous}
+            disabled={queue.length === 0 || queueIndex <= 0}
+            aria-label="السورة السابقة"
+          >
+            <SkipForward className="h-4 w-4" />
+          </Button>
           <Button
             size="icon"
             className={cn(
@@ -131,17 +130,16 @@ export function AudioPlayerMini() {
               <Play className="h-5 w-5" />
             )}
           </Button>
-          {queue.length > 1 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={next}
-              disabled={queueIndex >= queue.length - 1}
-            >
-              <SkipBack className="h-4 w-4" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={next}
+            disabled={queue.length === 0 || queueIndex >= queue.length - 1}
+            aria-label="السورة التالية"
+          >
+            <SkipBack className="h-4 w-4" />
+          </Button>
         </div>
 
         {/* Left (RTL): time + expand + close */}
@@ -270,7 +268,8 @@ export function AudioPlayerExpanded() {
               size="icon"
               className="h-11 w-11 sm:h-12 sm:w-12"
               onClick={previous}
-              disabled={queueIndex <= 0}
+              disabled={queue.length === 0 || queueIndex <= 0}
+              aria-label="السورة السابقة"
             >
               <SkipForward className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
@@ -294,7 +293,8 @@ export function AudioPlayerExpanded() {
               size="icon"
               className="h-11 w-11 sm:h-12 sm:w-12"
               onClick={next}
-              disabled={queueIndex >= queue.length - 1}
+              disabled={queue.length === 0 || queueIndex >= queue.length - 1}
+              aria-label="السورة التالية"
             >
               <SkipBack className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
