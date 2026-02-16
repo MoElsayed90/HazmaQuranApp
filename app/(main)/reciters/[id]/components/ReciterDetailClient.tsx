@@ -32,7 +32,7 @@ export function ReciterDetailClient({
     recitationsWithClips[0]?.id ?? null
   );
   const showImage = Boolean(reciterImage && !imageError);
-  const { play, toggle, isTrackPlaying, currentTrack, progress, playQueue } =
+  const { toggle, isTrackPlaying, currentTrack, progress, playQueue } =
     useAudioPlayerContext();
 
   const selectedRecitation =
@@ -55,17 +55,24 @@ export function ReciterDetailClient({
       toggle();
       return;
     }
-    const surahId = getSurahIdFromArabicTitle(attachment.title);
-    const surahName = surahId != null ? getSurahDisplayName(surahId) : attachment.title;
-    play({
-      id: attachment.id,
-      url: attachment.url,
-      title: attachment.title,
-      subtitle: `${reciterName} - ${recitationTitle}`,
-      surahId: surahId ?? undefined,
-      surahName,
-      reciterName: `${reciterName} - ${recitationTitle}`,
+    if (!selectedRecitation) return;
+    const tracks = selectedRecitation.attachments.map((a) => {
+      const surahId = getSurahIdFromArabicTitle(a.title);
+      const surahName = surahId != null ? getSurahDisplayName(surahId) : a.title;
+      return {
+        id: a.id,
+        url: a.url,
+        title: a.title,
+        subtitle: `${reciterName} - ${recitationTitle}`,
+        surahId: surahId ?? undefined,
+        surahName,
+        reciterName: `${reciterName} - ${recitationTitle}`,
+      };
     });
+    const index = selectedRecitation.attachments.findIndex((a) => a.id === attachment.id);
+    if (index >= 0 && tracks.length > 0) {
+      playQueue(tracks, index);
+    }
   };
 
   const handlePlayAll = (recitation: Recitation) => {

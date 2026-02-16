@@ -16,6 +16,7 @@ import { useAudioPlayerContext } from "@/hooks/use-audio-player";
 import { PLAYBACK_SPEEDS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 
 function formatTime(seconds: number): string {
   if (!seconds || !isFinite(seconds)) return "0:00";
@@ -59,14 +60,16 @@ export function AudioPlayerMini() {
       exit={{ y: 100, opacity: 0 }}
       className="fixed bottom-0 inset-x-0 z-50 border-t-2 border-border bg-card shadow-[0_-4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.35)] backdrop-blur-sm"
     >
-      {/* Progress bar at top - clickable for seek (Spotify/Anghami style) */}
+      {/* Progress bar at top - clickable for seek; RTL: left = end, right = start */}
       <button
         type="button"
         className="w-full h-1.5 bg-primary/20 flex cursor-pointer group"
         onClick={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           const x = e.clientX - rect.left;
-          const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+          const isRtl = typeof document !== "undefined" && document.documentElement.dir === "rtl";
+          const pctRaw = Math.max(0, Math.min(100, (x / rect.width) * 100));
+          const pct = isRtl ? 100 - pctRaw : pctRaw;
           seek(pct);
         }}
         aria-label="انتقل إلى موضع في المقطع"
@@ -190,6 +193,10 @@ export function AudioPlayerExpanded() {
     queue,
     queueIndex,
   } = useAudioPlayerContext();
+  const [isRtl, setIsRtl] = useState(false);
+  useEffect(() => {
+    setIsRtl(document.documentElement.dir === "rtl");
+  }, []);
 
   if (!isExpanded || !currentTrack) return null;
 
@@ -246,13 +253,13 @@ export function AudioPlayerExpanded() {
             </div>
           </div>
 
-          {/* Progress + time */}
+          {/* Progress + time — RTL: invert so left = end, right = start */}
           <div className="w-full max-w-md space-y-1.5 shrink-0">
             <Slider
-              value={[progress]}
+              value={[isRtl ? 100 - progress : progress]}
               max={100}
               step={0.1}
-              onValueChange={(val) => seek(val[0])}
+              onValueChange={(val) => seek(isRtl ? 100 - val[0] : val[0])}
               className="w-full"
             />
             <div className="flex justify-between text-xs text-muted-foreground tabular-nums">
