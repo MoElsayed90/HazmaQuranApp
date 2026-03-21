@@ -19,4 +19,13 @@ export const queryKeys = {
     all: ["recitation"] as const,
     detail: (id: number) => [...queryKeys.recitation.all, id] as const,
   },
+  mushaf: {
+    page: (page: number) => ["mushaf", "page", page] as const,
+    pageByAyah: (ayahKey: string) => ["mushaf", "pageByAyah", ayahKey] as const,
+    layout: (page: number) => ["mushaf", "layout", page] as const,
+  },
+  chapterAudio: {
+    file: (reciterId: string, chapter: number, segments: boolean) =>
+      ["chapterAudio", reciterId, chapter, segments] as const,
+  },
 } as const;

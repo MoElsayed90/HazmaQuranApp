@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1656" fill="none" aria-hidden="true">
+  <!-- Same aspect ratio as w1024_pageXXX.png (1024�1656). Transparent center; border only. -->
+  <defs>
+    <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6B5344" />
+      <stop offset="50%" stop-color="#8B7355" />
+      <stop offset="100%" stop-color="#5C4033" />
+    </linearGradient>
+  </defs>
+  <!-- Four border bands: center stays transparent -->
+  <rect width="1024" height="32" fill="url(#fg)" />
+  <rect x="0" y="1624" width="1024" height="32" fill="url(#fg)" />
+  <rect width="32" height="1656" fill="url(#fg)" />
+  <rect x="992" y="0" width="32" height="1656" fill="url(#fg)" />
+  <!-- Inner corner accents -->
+  <rect x="32" y="32" width="3" height="64" fill="#5C4033" opacity="0.5" />
+  <rect x="32" y="32" width="64" height="3" fill="#5C4033" opacity="0.5" />
+  <rect x="989" y="32" width="3" height="64" fill="#5C4033" opacity="0.5" />
+  <rect x="928" y="32" width="64" height="3" fill="#5C4033" opacity="0.5" />
+  <rect x="32" y="1560" width="3" height="64" fill="#5C4033" opacity="0.5" />
+  <rect x="32" y="1593" width="64" height="3" fill="#5C4033" opacity="0.5" />
+  <rect x="989" y="1560" width="3" height="64" fill="#5C4033" opacity="0.5" />
+  <rect x="928" y="1593" width="64" height="3" fill="#5C4033" opacity="0.5" />
+</svg>

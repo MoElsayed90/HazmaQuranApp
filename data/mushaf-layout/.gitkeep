@@ -1,0 +1,3 @@
+# Layout JSONs: page-001.json … page-604.json (optional).
+# Generate with: npm run dev && node scripts/generate-mushaf-layout.js
+# If missing, API returns stub boxes from Quran.Foundation verses.

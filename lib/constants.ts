@@ -69,6 +69,19 @@ export function getSurahAyahRange(surahId: number): [number, number] {
   return [start, start + count - 1];
 }
 
+/** Parse verseKey "chapter:verse" and return global ayah number (1–6236), or 0 if invalid */
+export function verseKeyToGlobalAyah(verseKey: string): number {
+  const m = /^(\d+):(\d+)$/.exec(verseKey);
+  if (!m) return 0;
+  const chapter = parseInt(m[1], 10);
+  const verse = parseInt(m[2], 10);
+  if (chapter < 1 || chapter > 114 || verse < 1) return 0;
+  const count = SURAH_AYAH_COUNTS[chapter] ?? 0;
+  if (verse > count) return 0;
+  const [start] = getSurahAyahRange(chapter);
+  return start + verse - 1;
+}
+
 /** إزالة التشكيل من النص العربي لتحسين المطابقة */
 function stripArabicDiacritics(s: string): string {
   return s.replace(/[\u064b-\u0652\u0670]/g, "").trim();
@@ -102,6 +115,7 @@ export function getSurahDisplayName(surahId: number): string {
 export const NAV_LINKS = [
   { href: "/", label: "الرئيسية", icon: "Home" },
   { href: "/surahs", label: "القرآن الكريم", icon: "BookOpen" },
+  { href: "/mushaf", label: "المصحف", icon: "BookMarked" },
   { href: "/reciters", label: "القراء", icon: "Mic2" },
   { href: "/bookmarks", label: "المحفوظات", icon: "Bookmark" },
 ] as const;

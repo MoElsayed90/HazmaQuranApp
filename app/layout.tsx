@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { AudioProvider } from "@/components/providers/AudioProvider";
 import { FontSizeSync } from "@/components/providers/FontSizeSync";
+import { MushafSwRegistration } from "@/components/providers/MushafSwRegistration";
 import { Toaster } from "sonner";
 import { FaviconDebugLog } from "@/components/debug/FaviconDebugLog";
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         <ThemeProvider>
           <QueryProvider>
             <FontSizeSync />
+            <MushafSwRegistration />
             <FaviconDebugLog />
             <AudioProvider>
             {children}

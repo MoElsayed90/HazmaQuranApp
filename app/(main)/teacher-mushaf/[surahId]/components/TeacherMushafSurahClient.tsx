@@ -1,17 +1,40 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { Play, Pause, ArrowRight, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAudioPlayerContext } from "@/hooks/use-audio-player";
+import { useChapterAudioFile } from "@/lib/queries/hooks";
 import { getAyahAudioUrl } from "@/lib/audio/service";
 import type { Surah, Ayah } from "@/lib/api/types";
+import type { ChapterAudioTimestamp } from "@/lib/queries/fetchers";
 import { cn } from "@/lib/utils";
 
 const RECITER_LABEL = "محمود خليل الحصري (المصحف المعلم)";
 const EDITION_ID = "husaryMuelam";
+
+/** QF reciter ID for Teacher mode (Al-Husary style). Set via env QF_TEACHER_RECITER_ID if available. */
+const QF_TEACHER_RECITER_ID =
+  (typeof process !== "undefined" && process.env.NEXT_PUBLIC_QF_TEACHER_RECITER_ID) || "7";
+
+function getVerseKeyFromTimestamps(
+  timestamps: ChapterAudioTimestamp[],
+  currentTimeMs: number
+): string | null {
+  if (!timestamps.length) return null;
+  let lo = 0;
+  let hi = timestamps.length - 1;
+  while (lo <= hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    const t = timestamps[mid];
+    if (currentTimeMs >= t.from && currentTimeMs <= t.to) return t.verseKey;
+    if (currentTimeMs < t.from) hi = mid - 1;
+    else lo = mid + 1;
+  }
+  return timestamps[lo]?.verseKey ?? timestamps[hi]?.verseKey ?? null;
+}
 
 function MuelamAyahRow({
   ayah,
@@ -99,34 +122,97 @@ export function TeacherMushafSurahClient({
   surah: Surah;
   ayahs: Ayah[];
 }) {
-  const { currentTrack, isPlaying, playQueue } = useAudioPlayerContext();
+  const { currentTrack, isPlaying, playQueue, play, currentTime } =
+    useAudioPlayerContext();
   const topRef = useRef<HTMLDivElement>(null);
+  const [highlightedVerseKey, setHighlightedVerseKey] = useState<string | null>(null);
+  const timestampsRef = useRef<ChapterAudioTimestamp[] | null>(null);
+  const currentTimeRef = useRef(0);
+
+  const { data: chapterAudio } = useChapterAudioFile(
+    QF_TEACHER_RECITER_ID,
+    surah.id,
+    true
+  );
+
+  useEffect(() => {
+    currentTimeRef.current = currentTime;
+  }, [currentTime]);
 
   const currentAyahNumber =
     currentTrack?.surahId === surah.id && currentTrack?.ayahNumber != null
       ? currentTrack.ayahNumber
       : undefined;
 
+  const isPlayingFullChapter =
+    currentTrack?.id === `qf-chapter-${surah.id}` && isPlaying;
+
   useEffect(() => {
-    if (currentAyahNumber && isPlaying) {
+    if (isPlayingFullChapter && timestampsRef.current?.length) {
+      const id = setInterval(() => {
+        const ms = currentTimeRef.current * 1000;
+        const verseKey = getVerseKeyFromTimestamps(timestampsRef.current!, ms);
+        setHighlightedVerseKey(verseKey);
+      }, 300);
+      return () => clearInterval(id);
+    }
+    if (!isPlayingFullChapter) {
+      setHighlightedVerseKey(null);
+    }
+  }, [isPlayingFullChapter]);
+
+  useEffect(() => {
+    if (currentAyahNumber && isPlaying && !isPlayingFullChapter) {
       const el = document.getElementById(`ayah-${currentAyahNumber}`);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
-  }, [currentAyahNumber, isPlaying]);
+  }, [currentAyahNumber, isPlaying, isPlayingFullChapter]);
 
-  const handlePlayAll = () => {
-    const tracks = ayahs.map((a) => ({
-      id: `muelam-${surah.id}-${a.numberInQuran}`,
-      url: getAyahAudioUrl(a.numberInQuran, EDITION_ID),
-      title: `الآية ${a.number} — سورة ${surah.name}`,
-      subtitle: RECITER_LABEL,
-      surahId: surah.id,
-      ayahNumber: a.number,
-    }));
-    if (tracks.length > 0) playQueue(tracks, 0);
-  };
+  useEffect(() => {
+    if (highlightedVerseKey && isPlayingFullChapter) {
+      const [, verseNum] = highlightedVerseKey.split(":");
+      const el = document.getElementById(`ayah-${verseNum}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [highlightedVerseKey, isPlayingFullChapter]);
+
+  const handlePlayAll = useCallback(() => {
+    if (chapterAudio?.audioUrl && chapterAudio?.timestamps?.length) {
+      timestampsRef.current = chapterAudio.timestamps;
+      play({
+        id: `qf-chapter-${surah.id}`,
+        url: chapterAudio.audioUrl,
+        title: `سورة ${surah.name}`,
+        subtitle: RECITER_LABEL,
+        surahId: surah.id,
+      });
+    } else {
+      timestampsRef.current = null;
+      const tracks = ayahs.map((a) => ({
+        id: `muelam-${surah.id}-${a.numberInQuran}`,
+        url: getAyahAudioUrl(a.numberInQuran, EDITION_ID),
+        title: `الآية ${a.number} — سورة ${surah.name}`,
+        subtitle: RECITER_LABEL,
+        surahId: surah.id,
+        ayahNumber: a.number,
+      }));
+      if (tracks.length > 0) playQueue(tracks, 0);
+    }
+  }, [chapterAudio, surah, ayahs, play, playQueue]);
+
+  const getIsHighlighted = useCallback(
+    (ayah: Ayah) => {
+      if (highlightedVerseKey) {
+        return highlightedVerseKey === `${surah.id}:${ayah.number}`;
+      }
+      return currentAyahNumber === ayah.number;
+    },
+    [highlightedVerseKey, currentAyahNumber, surah.id]
+  );
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -197,7 +283,7 @@ export function TeacherMushafSurahClient({
             surahId={surah.id}
             surahName={surah.name}
             audioUrl={getAyahAudioUrl(ayah.numberInQuran, EDITION_ID)}
-            isHighlighted={currentAyahNumber === ayah.number}
+            isHighlighted={getIsHighlighted(ayah)}
           />
         ))}
       </div>
